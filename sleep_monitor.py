@@ -7,12 +7,11 @@ sampling_frequency = 32
 segment_window_size = 1
 acceleration_threshold = 10
 motionless_sleep_threshold_in_window_percentage = 50
+tv_filter_lambda = 5
 
 style.use('ggplot')
 
-def get_preprocessed_data():
-  data = np.loadtxt(input_file_path)
-  plot_raw_ax(data)
+def segment(data):
   size = len(data)
   
   # CONVERT THE ACCELEROMETER DATA INTO REAL ACCELERATION VALUES
@@ -26,7 +25,6 @@ def get_preprocessed_data():
 
   filtered_data = list(filter(lambda segment: is_valid_segment(segment), segmented_data))
   print("Number of filtered segments:", len(filtered_data))
-  return filtered_data
 
 
 def is_valid_segment(segment):
@@ -34,7 +32,7 @@ def is_valid_segment(segment):
   motionless_limit = window_size - (motionless_sleep_threshold_in_window_percentage/100)*window_size
   return len(list(filter(lambda tuple: np.linalg.norm([tuple[0], tuple[1], tuple[2]]) < acceleration_threshold, segment))) >= motionless_limit
 
-def plot_raw_ax(data):
+def plot_ax(data):
   x = np.array(data[:,0])
   y = list(range(0, len(data)))
   plt.plot(y, x)
@@ -45,6 +43,31 @@ def plot_raw_ax(data):
   plt.draw()
   plt.pause(5)
 
+def preprocess(data):
+  data[:,0] = denoisify(data[:,0], tv_filter_lambda, len(data))
+  data[:,1] = denoisify(data[:,1], tv_filter_lambda, len(data))
+  data[:,2] = denoisify(data[:,2], tv_filter_lambda, len(data))
+  return
 
-if __name__ == "__main__":
-  get_preprocessed_data()
+def clip(x, b):
+  return np.where(x <= b, x, b * np.sign(x))
+
+def denoisify(y, lambda_value, nit):
+  J = np.zeros((1, nit))
+  N = len(y)
+  z = np.zeros((1, N))
+  alpha = 4
+  T = lambda_value / 2
+  for k in range(0, N-1):
+    x = y - (-z[0] - np.dot(z, z[len(z)-1]))
+    J[0][k] = np.sum([np.dot(np.abs(x-y), np.abs(x-y))]) + lambda_value * np.sum([np.abs(np.diff(x))])
+    z = z + (1/alpha) * x # z + 1/alpha D z
+    z = np.vectorize(clip)(z, T)
+  return x
+
+if __name__ == '__main__':
+  data = np.loadtxt(input_file_path)
+  plot_ax(data)
+  segment(data)
+  preprocess(data)
+  plot_ax(data)
