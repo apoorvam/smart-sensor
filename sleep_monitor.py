@@ -44,24 +44,28 @@ def plot_ax(data):
   plt.pause(5)
 
 def preprocess(data):
+  print(data)
   data[:,0] = denoisify(data[:,0], tv_filter_lambda, len(data))
   data[:,1] = denoisify(data[:,1], tv_filter_lambda, len(data))
   data[:,2] = denoisify(data[:,2], tv_filter_lambda, len(data))
+  print(data)
   return
 
 def clip(x, b):
   return np.where(x <= b, x, b * np.sign(x))
 
+# Total variation filter
 def denoisify(y, lambda_value, nit):
   J = np.zeros((1, nit))
   N = len(y)
-  z = np.zeros((1, N))
+  z = np.zeros((1, N-1))
   alpha = 4
   T = lambda_value / 2
   for k in range(0, N-1):
-    x = y - (-z[0] - np.dot(z, z[len(z)-1]))
-    J[0][k] = np.sum([np.dot(np.abs(x-y), np.abs(x-y))]) + lambda_value * np.sum([np.abs(np.diff(x))])
-    z = z + (1/alpha) * x # z + 1/alpha D z
+    x = y - np.c_[-z[0][0], -np.diff(z, n=1), z[len(z)-1][len(z)-1]]
+    abs = np.abs(x-y)
+    J[0][k] = np.sum(abs*abs) + lambda_value * np.sum(np.abs(np.diff(x)))
+    z = z + (1/alpha) * np.diff(x) # z + 1/alpha D z
     z = np.vectorize(clip)(z, T)
   return x
 
