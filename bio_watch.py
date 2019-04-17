@@ -63,12 +63,6 @@ def fft(data):
   N = len(acc_data)
   T = 1/sampling_frequency
   t = np.linspace(0, N/sampling_frequency, N)
-  plt.ylabel("Amplitude")
-  plt.xlabel("Time [s]")
-  plt.plot(t, acc_data)
-  plt.draw()
-  plt.pause(5)
-  plt.close()
 
   fft_data = sp.fftpack.fft(acc_data)
   T = t[1] - t[0]
