@@ -41,12 +41,12 @@ def is_valid_segment(segment):
   motionless_limit = window_size - (motionless_sleep_threshold_in_window_percentage/100)*window_size
   return len(list(filter(lambda tuple: np.linalg.norm([tuple[0], tuple[1], tuple[2]]) < acceleration_threshold, segment))) >= motionless_limit
 
-def plot_ax(data):
+def plot_ax(data, title):
   x = np.array(data[:,0])
   y = list(range(0, len(data)))
   plt.plot(y, x)
 
-  plt.title('Raw Accelerometer Data')
+  plt.title(title)
   plt.ylabel('ACCELERATION Ax (m/s^2)')
   plt.xlabel('TIME (s)')
   plt.draw()
@@ -81,15 +81,15 @@ def denoisify(y, lambda_value, nit):
 def apply_fft_on_xyz(data):
   print('Converting time domain signal to frequency domain by FFT...')
   print('X-Axis')
-  r_x = apply_fft(data[:,0])
+  r_x = apply_fft(data[:,0], 'FFT of the filtered data X-Axis')
   print('Y-Axis')
-  r_y = apply_fft(data[:,1])
+  r_y = apply_fft(data[:,1], 'FFT of the filtered data Y-Axis')
   print('Z-Axis')
-  r_z = apply_fft(data[:,2])
+  r_z = apply_fft(data[:,2], 'FFT of the filtered data Z-Axis')
   print('Average Respiratory rate (bpm):', (r_x+r_y+r_z)/3)
 
 # Fast fourier transform
-def apply_fft(data):
+def apply_fft(data, title):
   acc_data = data
   acc_data = sp.signal.detrend(acc_data)
   N = len(acc_data)
@@ -120,7 +120,7 @@ def apply_fft(data):
 
   plt.xlabel('Frequency in Hertz [Hz]')
   plt.ylabel('Magnitude')
-  plt.title('FFT of the filtered data')
+  plt.title(title)
   plt.draw()
   plt.pause(5)
   plt.close()
@@ -130,8 +130,8 @@ if __name__ == '__main__':
   data = np.loadtxt(input_file_path)
   print("Number of records:", len(data))
 
-  # plot_ax(data)
+  plot_ax(data, 'Raw Accelerometer Data')
   data = segment(data)
   data = preprocess(data)
-  # plot_ax(data)
+  plot_ax(data, 'Processed Accelerometer Data')
   apply_fft_on_xyz(data)
