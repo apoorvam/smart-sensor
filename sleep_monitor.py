@@ -3,8 +3,11 @@ import matplotlib.pyplot as plt
 from matplotlib import style
 import scipy.fftpack
 import scipy as sp
+from scipy import signal
+import warnings
+warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
-input_file_path = "HMP_Dataset/Liedown_bed/Accelerometer-2011-06-02-17-21-57-liedown_bed-m1.txt"
+input_file_path = "HMP_Dataset/Liedown_bed/Accelerometer-2011-05-30-10-38-41-liedown_bed-m1.txt"
 sampling_frequency = 32
 segment_window_size = 1
 acceleration_threshold = 10
@@ -75,33 +78,60 @@ def denoisify(y, lambda_value, nit):
     z = np.vectorize(clip)(z, T)
   return x
 
+def apply_fft_on_xyz(data):
+  print('Converting time domain signal to frequency domain by FFT...')
+  print('X-Axis')
+  r_x = apply_fft(data[:,0])
+  print('Y-Axis')
+  r_y = apply_fft(data[:,1])
+  print('Z-Axis')
+  r_z = apply_fft(data[:,2])
+  print('Average Respiratory rate (bpm):', (r_x+r_y+r_z)/3)
+
 # Fast fourier transform
 def apply_fft(data):
-  print('Converting time domain signal to frequency domain...')
-  x = data[:,0]
+  acc_data = data
+  acc_data = sp.signal.detrend(acc_data)
+  N = len(acc_data)
+  T = 1/sampling_frequency
+  t = np.linspace(0, N/sampling_frequency, N)
 
-  X = sp.fftpack.fft(x)
-  freqs = sp.fftpack.fftfreq(len(x)) * sampling_frequency
-  # positive_freqs = np.array(list(map(lambda f: 0 if f < 0 or f > 0.5 else f, freqs)))
+  fft_data = sp.fftpack.fft(acc_data)
+  T = t[1] - t[0]
+  f = np.linspace(0, 1/T, N)
 
-  fig, ax = plt.subplots()
-  ax.stem(freqs, np.abs(X))
+  plt.plot(f[:N // 2], np.abs(fft_data)[:N // 2] * 1 / N)
 
-  ax.set_xlabel('Frequency in Hertz [Hz]')
-  ax.set_ylabel('Magnitude')
-  ax.set_title('FFT of the filtered data')
-  ax.set_xlim(-0.25, 1)
-  print(max(abs(X)))
-  print(max(abs(freqs)))
-  plt.show()
-  return
+  max_amp = 0
+  max_index = 0
+  index = 0
+  for c in fft_data[:N//2]:
+    real = np.real(c)
+    img = np.imag(c)
+    amp = np.sqrt(real*real + img*img)
+    if max_amp < amp:
+      max_amp = amp
+      max_index = index
+    index = index+1
+
+  print('Max Amplitude:', max_amp)
+  print('Respiratory rate:',f[max_index])
+  print('Respiratory rate (bpm):',f[max_index]*60)
+
+  plt.xlabel('Frequency in Hertz [Hz]')
+  plt.ylabel('Magnitude')
+  plt.title('FFT of the filtered data')
+  plt.draw()
+  plt.pause(5)
+  plt.close()
+  return f[max_index]*60
 
 if __name__ == '__main__':
   data = np.loadtxt(input_file_path)
   print("Number of records:", len(data))
 
-  plot_ax(data)
+  # plot_ax(data)
   data = segment(data)
   data = preprocess(data)
-  plot_ax(data)
-  apply_fft(data)
+  # plot_ax(data)
+  apply_fft_on_xyz(data)
