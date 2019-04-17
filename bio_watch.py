@@ -59,18 +59,45 @@ def aggregate_components(data):
 
 def fft(data):
   acc_data = data[:,0]
+  acc_data = acc_data[~np.isnan(acc_data)]
   N = len(acc_data)
   T = 1/sampling_frequency
+  t = np.linspace(0, N/sampling_frequency, N)
+  plt.ylabel("Amplitude")
+  plt.xlabel("Time [s]")
+  plt.plot(t, acc_data)
+  plt.draw()
+  plt.pause(5)
+  plt.close()
 
-  yr = sp.fftpack.fft(acc_data)
-  freqs = sp.fftpack.fftfreq(N)
+  fft_data = sp.fftpack.fft(acc_data)
+  T = t[1] - t[0]
+  f = np.linspace(0, 1/T, N)
 
-  plt.bar(freqs, np.abs(yr)) 
+  plt.plot(f[:N // 2], np.abs(fft_data)[:N // 2] * 1 / N)
   plt.xlabel('Frequency in Hertz [Hz]')
   plt.ylabel('Magnitude')
   plt.title('FFT')
-  plt.show()
+  plt.draw()
+  plt.pause(5)
+  plt.close()
 
+  max_amp = 0
+  max_c = 0
+  max_index = 0
+  index = 0
+  for c in fft_data:
+    real = np.real(c)
+    img = np.imag(c)
+    amp = np.sqrt(real*real + img*img)
+    if max_amp < amp:
+      max_amp = amp
+      max_c = c
+      max_index = index
+    index = index + 1
+
+  print('Max Amplitude:', max_amp)
+  print('Heart Rate:', (60*sampling_frequency)/(T*N))
   return
 
 if __name__ == '__main__':
@@ -88,7 +115,6 @@ if __name__ == '__main__':
   low_cutoff_freq = 11
   bandpass1_data = apply_bandpass_butterworth_filter(smooth_data, low_cutoff_freq, high_cutoff_freq)
   plot(bandpass1_data[:,0], 'Bandpass-1 Accelerometer Data')
-  print(bandpass1_data)
 
   # aggregated_data = aggregate_components(bandpass1_data)
 
@@ -96,7 +122,6 @@ if __name__ == '__main__':
   low_cutoff_freq = 0.66
   bandpass2_data = apply_bandpass_butterworth_filter(bandpass1_data, low_cutoff_freq, high_cutoff_freq)
   plot(bandpass2_data, 'Bandpass-2 Accelerometer Data')
-  print(bandpass2_data)
 
   fft(bandpass2_data)
 
