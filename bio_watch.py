@@ -6,6 +6,9 @@ import scipy as sp
 from scipy.stats import zscore
 import pandas as pd
 from scipy.signal import butter, lfilter
+from scipy import signal
+import warnings
+warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
 input_file_path = "HMP_Dataset/Liedown_bed/Accelerometer-2011-06-02-17-21-57-liedown_bed-m1.txt"
 sampling_frequency = 32
@@ -60,6 +63,7 @@ def aggregate_components(data):
 def fft(data):
   acc_data = data[:,0]
   acc_data = acc_data[~np.isnan(acc_data)]
+  acc_data = sp.signal.detrend(acc_data)
   N = len(acc_data)
   T = 1/sampling_frequency
   t = np.linspace(0, N/sampling_frequency, N)
@@ -77,21 +81,23 @@ def fft(data):
   plt.close()
 
   max_amp = 0
-  max_c = 0
   max_index = 0
   index = 0
   for c in fft_data:
+    if f[index] < 0.66 or f[index] > 2.5:
+      index = index + 1
+      continue;
     real = np.real(c)
     img = np.imag(c)
     amp = np.sqrt(real*real + img*img)
     if max_amp < amp:
       max_amp = amp
-      max_c = c
       max_index = index
     index = index + 1
 
   print('Max Amplitude:', max_amp)
-  print('Heart Rate:', (60*sampling_frequency)/(T*N))
+  print('Max Frequency:',f[max_index])
+  print('Heart Rate (bpm):', 60*f[max_index])
   return
 
 if __name__ == '__main__':
