@@ -9,6 +9,7 @@ from scipy.signal import butter, lfilter
 from scipy import signal
 import warnings
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
+style.use('ggplot')
 
 input_file_path = "HMP_Dataset/Liedown_bed/Accelerometer-2011-06-02-17-21-57-liedown_bed-m1.txt"
 sampling_frequency = 32

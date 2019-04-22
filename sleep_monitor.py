@@ -7,7 +7,7 @@ from scipy import signal
 import warnings
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
-input_file_path = "HMP_Dataset/Liedown_bed/Accelerometer-2011-05-30-10-38-41-liedown_bed-m1.txt"
+input_file_path = "HMP_Dataset/Liedown_bed/Accelerometer-2011-06-02-17-21-57-liedown_bed-m1.txt"
 sampling_frequency = 32
 segment_window_size = 1
 acceleration_threshold = 10
@@ -43,7 +43,8 @@ def is_valid_segment(segment):
 
 def plot_ax(data, title):
   x = np.array(data[:,0])
-  y = list(range(0, len(data)))
+  N = len(x)
+  y = np.linspace(0, sampling_frequency, N)
   plt.plot(y, x)
 
   plt.title(title)
@@ -93,12 +94,9 @@ def apply_fft(data, title):
   acc_data = data
   acc_data = sp.signal.detrend(acc_data)
   N = len(acc_data)
-  T = 1/sampling_frequency
-  t = np.linspace(0, N/sampling_frequency, N)
 
   fft_data = sp.fftpack.fft(acc_data)
-  T = t[1] - t[0]
-  f = np.linspace(0, 1/T, N)
+  f = np.linspace(0, sampling_frequency, N)
 
   plt.plot(f[:N // 2], np.abs(fft_data)[:N // 2] * 1 / N)
 
