@@ -30,7 +30,7 @@ Dataset used: https://archive.ics.uci.edu/ml/datasets/Dataset+for+ADL+Recognitio
 
 ### Output
 
-```
+```sh
 $ python3 sleep_monitor.py
 Number of records: 736
 Segmenting data...
@@ -87,7 +87,7 @@ X, Y, Z axes of accelerometer values are normalized with z-scores to give them s
 
 ### Output
 
-```
+```sh
 $ python3 bio_watch.py
 Number of records: 736
 Max Amplitude: 164.356553437
@@ -109,12 +109,14 @@ Based on Seismocardiography(SCG) approach.
 ### System Overview for Heart Rate and Respiratory Rate
 
 1. Raw Accelerometer Data
+
 ![Raw Accelerometer Data](plots/seismotracker/raw_ax.png)
 
 2. Preprocessing - Normalize
 
 3. Respiratory Rate estimation
 - based on prevalent signal amplitude in frequency domain
+
 X-Axis:
 
 ![Breathing Rate estimation - X Axis](plots/seismotracker/br_fft_xaxis.png)
@@ -152,7 +154,7 @@ Z-Axis:
 
 ### Output
 
-```
+```sh
 $ python3 seismotracker.py
 Number of records: 736
 Breathing Rate
