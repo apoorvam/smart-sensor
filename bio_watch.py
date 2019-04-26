@@ -120,8 +120,8 @@ def calculate_heart_rate(normalized_data):
   smooth_data = np.array(list(filter(lambda row: np.isfinite(np.sum(row)), smooth_data)), dtype=np.float64)
   plot(smooth_data[:,0], 'Smoothened Accelerometer Data')
 
-  high_cutoff_freq = 4
-  low_cutoff_freq = 11
+  low_cutoff_freq = 4
+  high_cutoff_freq = 11
   bandpass1_data = apply_bandpass_butterworth_filter(smooth_data, low_cutoff_freq, high_cutoff_freq)
   plot(bandpass1_data[:,0], 'Bandpass-1 Accelerometer Data')
 

@@ -90,16 +90,16 @@ X, Y, Z axes of accelerometer values are normalized with z-scores to give them s
 ```sh
 $ python3 bio_watch.py
 Number of records: 736
-Max Amplitude: 164.356553437
-Max Frequency: 0.743169398907
-Heart Rate (bpm): 44.5901639344
+Max Amplitude: 21.9688066668
+Max Frequency: 0.874316939891
+Heart Rate (bpm): 52.4590163934
 Max Amplitude within 0.13 and 0.66 Hz frequency:
 X-Axis: 83.7839707083
 Y-Axis: 134.28961208
 Z-Axis: 193.645331484
 Max amplitude chosen: 193.645331484
-Frequency of chosen amplitude: 0.179523141655
-Respiratory Rate (bpm): 10.7713884993
+Frequency of chosen amplitude: 0.179775280899
+Respiratory Rate (bpm): 10.7865168539
 ```
 
 ## Seismotracker
