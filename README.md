@@ -28,6 +28,8 @@ Dataset used: https://archive.ics.uci.edu/ml/datasets/Dataset+for+ADL+Recognitio
 ![FFT Y-Axis](plots/sleep_monitor/fft_yaxis.png)
 ![FFT Z-Axis](plots/sleep_monitor/fft_zaxis.png)
 
+5. Multi axis fusion - Kalman filter
+
 ### Output
 
 ```sh
@@ -44,8 +46,6 @@ Converting time domain signal to frequency domain by FFT...
 Performing multi-axis fusion by Kalman filter...
 Breathing rate from Kalman filter: 15.1181102362
 ```
-
-5. Multi axis fusion - Kalman filter
 
 ## Bio Watch
 
@@ -154,7 +154,7 @@ Z-Axis:
 
 ### Output
 
-```sh
+```zsh
 $ python3 seismotracker.py
 Number of records: 736
 Breathing Rate
