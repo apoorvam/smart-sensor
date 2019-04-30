@@ -103,6 +103,9 @@ def apply_pass_filter(unfiltered_data, btype, cutoff):
   return filtered_data
 
 def seismotracker(data, sampling_freq):
+  plot(data[:,0], 'Unfiltered Raw Accelerometer Data')
+
+  global sampling_frequency
   sampling_frequency = sampling_freq
   normalized_data = normalize(data)
   print('Breathing Rate:')
@@ -145,7 +148,6 @@ def seismotracker(data, sampling_freq):
 if __name__ == '__main__':
   data = pd.read_csv(input_file_path).values
   print("Number of records:", len(data))
-  # plot(data[:,0], 'Unfiltered Raw Accelerometer Data')
   seismotracker(data)
 
 

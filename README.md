@@ -3,8 +3,8 @@
 Analysis of various HR/BR estimation algorithms from accelerometer data. The goal is to extract/summarize the resting-state respiration rate and/or heart rate from wrist-accelerometer data. 
 
 #### Datasets
-![Dataset for ADL Recognition with Wrist-worn Accelerometer Data Set](https://archive.ics.uci.edu/ml/datasets/Dataset+for+ADL+Recognition+with+Wrist-worn+Accelerometer) - Dataset 1
-![UCI Mhealth Dataset](https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset) - Dataset 2 and 3
+![UCI Mhealth Dataset](https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset) - Dataset 1
+![Dataset for ADL Recognition with Wrist-worn Accelerometer Data Set](https://archive.ics.uci.edu/ml/datasets/Dataset+for+ADL+Recognition+with+Wrist-worn+Accelerometer) - Dataset 2 and 3
 
 #### Papers
 1. [Bio Watch](https://ieeexplore.ieee.org/abstract/document/7349394)
@@ -13,29 +13,29 @@ Analysis of various HR/BR estimation algorithms from accelerometer data. The goa
 
 #### Results
 
-Dataset 1:
+Dataset 1: (datasets/uic_dataset.csv)
 
 |               |Heart Rate(bpm)|  Breathing Rate(bpm)|
 |---------------|---------------|---------------------|
-|Bio Watch|            84.176183  |          |17.804154|
+|Bio Watch|           84.176183      |      17.804154
+|SeismoTracker |     114.946272     |       14.327581
 |Sleep Monitor|         - |           |15.075377|
-|SeismoTracker |      114.946272|            |14.327581|
 
-Dataset 2:
-
-|               |Heart Rate(bpm)|  Breathing Rate(bpm)|
-|---------------|---------------|---------------------|
-|io Watch            |69.958848            |17.216643|
-|leep Monitor         |0.000000            |15.075377|
-|SeismoTracker|        68.027211            |12.244898|
-
-Dataset 3:
+Dataset 2: (datasets/hmp_dataset1.csv)
 
 |               |Heart Rate(bpm)|  Breathing Rate(bpm)|
 |---------------|---------------|---------------------|
-|Bio Watch      |      71.428571|            14.062500|
-|Sleep Monitor  |      0.000000 |          38.461538|
-|SeismoTracker  |     66.371681 |           16.224189|
+|Bio Watch            |44.835165            |11.034483|
+|SeismoTracker        |54.059946            |10.463215|
+|Sleep Monitor         |-            |15.118110|
+
+Dataset 3: (datasets/hmp_dataset2.csv)
+
+|               |Heart Rate(bpm)|  Breathing Rate(bpm)|
+|---------------|---------------|---------------------|
+|Bio Watch      |      45.782414 |            9.014085|
+|SeismoTracker  |    100.206795 |           10.398818|
+|Sleep Monitor  |      -|          15.118110|
 
 ## Bio Watch
 
@@ -66,14 +66,14 @@ X, Y, Z axes of accelerometer values are normalized with z-scores to give them s
 ![Bandpass 2 data](plots/bio_watch/bandpass2_ax.png)
 
 * Apply FFT to obtain Heart rate in frequency domain
-![FFT](plots/bio_watch/fft.png)
+![FFT](plots/bio_watch/hr_fft.png)
 
 4. Estimation of Respiratory wave and respiration rate
 
 * Apply averaging filter
 * Apply FFT to obtain Respiratory rate in frequency domain on each component and choose one component with most periodic signal. The  periodicity  level  was  defined as the maximum amplitude observed within 0.13 and 0.66 Hz in the frequency domain (corresponding  to 8 and 40 breaths per minute, respectively). 
 
-![FFT](plots/bio_watch/fft_zaxis.png)
+![FFT](plots/bio_watch/br_fft_xaxis.png)
 
 ### Output
 
@@ -107,27 +107,23 @@ Respiratory Rate (bpm): 17.8041543027
 
 4. FFT - Respiratory rate estimation on each axis
 
-![FFT X-Axis](plots/sleep_monitor/fft_xaxis.png)
-![FFT Y-Axis](plots/sleep_monitor/fft_yaxis.png)
-![FFT Z-Axis](plots/sleep_monitor/fft_zaxis.png)
-
 5. Multi axis fusion - Kalman filter
 
 ### Output
 
 ```sh
 $ python3 sleep_monitor.py
-Number of records: 736
+Number of records: 3072
 Segmenting data...
-Number of segments: 23
-Size of each segment: 32
+Number of segments: 61
+Size of each segment: 51
 Removing segments with motion...
-Number of filtered segments: 10
-Number of records: 320
+Number of filtered segments: 61
+Number of records: 3072
 Denoisifying data...
 Converting time domain signal to frequency domain by FFT...
 Performing multi-axis fusion by Kalman filter...
-Breathing rate from Kalman filter: 15.1181102362
+Breathing rate from Kalman filter: 15.0753768844
 ```
 
 ## Seismotracker
@@ -184,35 +180,34 @@ Z-Axis:
 
 ```zsh
 $ python3 seismotracker.py
-Number of records: 736
-Breathing Rate
---------------
+Breathing Rate:
 X-Axis:
-Max Amplitude: 433.453768883
-Frequency: 0.043537414966
-Respiration Rate (bpm): 2.61224489796
+Max Amplitude: 206.352510961
+Frequency: 0.293064148486
+Respiration Rate (bpm): 17.5838489092
 Y-Axis:
-Max Amplitude: 349.206476224
-Frequency: 0.043537414966
-Respiration Rate (bpm): 2.61224489796
+Max Amplitude: 130.772935511
+Frequency: 0.276782806903
+Respiration Rate (bpm): 16.6069684142
 Z-Axis:
-Max Amplitude: 263.877034229
-Frequency: 0.087074829932
-Respiration Rate (bpm): 5.22448979592
+Max Amplitude: 155.664930948
+Frequency: 0.146532074243
+Respiration Rate (bpm): 8.79192445458
+Average Respiration Rate (bpm): 14.3275805926
 
-Heart Rate
-----------
+Heart Rate:
 X-Axis:
-Max Amplitude: 0.445972110173
-Frequency: 0.87074829932
-Heart Rate (bpm): 52.2448979592
+Max Amplitude: 1.35768415257
+Frequency: 2.45848257896
+Heart Rate (bpm): 147.508954738
 Y-Axis:
-Max Amplitude: 0.549721723143
-Frequency: 1.00136054422
-Heart Rate (bpm): 60.0816326531
+Max Amplitude: 1.92224270757
+Frequency: 2.37707587105
+Heart Rate (bpm): 142.624552263
 Z-Axis:
-Max Amplitude: 0.930872303024
-Frequency: 0.783673469388
-Heart Rate (bpm): 47.0204081633
+Max Amplitude: 1.49709366808
+Frequency: 0.911755128623
+Heart Rate (bpm): 54.7053077174
+Average Heart Rate (bpm): 114.946271573
 
 ```

@@ -135,7 +135,9 @@ def apply_fft_on_xyz(data):
   return r_x, r_y, r_z
 
 def fft(data):
+  data = np.array(list(filter(lambda row: np.isfinite(np.sum(row)), data)), dtype=np.float64)
   N = len(data)
+
   data = sp.signal.detrend(data)
   fft_data = sp.fftpack.fft(data)
   f = np.linspace(0, sampling_frequency, N)
@@ -172,6 +174,9 @@ def apply_fft(acc_data, title):
   return f[max_index]*60
 
 def sleep_monitor(data, sampling_freq):
+  plot_ax(data, 'Raw Accelerometer Data')
+
+  global sampling_frequency
   sampling_frequency = sampling_freq
   data = segment(data)
   data = preprocess(data)
@@ -185,7 +190,5 @@ def sleep_monitor(data, sampling_freq):
 if __name__ == '__main__':
   data = np.loadtxt(input_file_path)
   print("Number of records:", len(data))
-  # plot_ax(data, 'Raw Accelerometer Data')
-
   sleep_monitor(data, sampling_frequency)
 

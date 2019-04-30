@@ -13,15 +13,25 @@ measurements = ['Heart Rate(bpm)', 'Breathing Rate(bpm)']
 
 if __name__ == '__main__':
   count = 1
+  results = {}
 
-  for dataset, sampling_freq in input_dataset_csv.items():
+  for dataset, sampling_freq in sorted(input_dataset_csv.items()):
     data = pd.read_csv(dataset).values
     print('\nDataset %d: %s\n========='% (count, dataset))
+    print("Number of records:", len(data))
+
     count = count + 1
     rates = []
     
-    for algo, algo_fn in algorithms.items():
+    for algo, algo_fn in sorted(algorithms.items()):
       print('\n%s:\n' % algo)
       hr, br = algo_fn(data.copy(), sampling_freq)
       rates.append([hr, br])
-    print(pd.DataFrame(rates, algorithms, measurements))
+    res = pd.DataFrame(rates, algorithms, measurements)
+    results[dataset] = res
+    print(res)
+
+  print('\nFinal Results\n=============')
+  for ds, result in sorted(results.items()):
+    print("\nDataset: %s\n%s" %(ds, result))
+

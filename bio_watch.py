@@ -121,19 +121,19 @@ def calculate_breathing_rate(normalized_data):
 def calculate_heart_rate(normalized_data):
   smooth_data = apply_average_filter(normalized_data, average_filter_window_duration_hr)
   smooth_data = np.array(list(filter(lambda row: np.isfinite(np.sum(row)), smooth_data)), dtype=np.float64)
-  # plot(smooth_data[:,0], 'Smoothened Accelerometer Data')
+  plot(smooth_data[:,0], 'Smoothened Accelerometer Data')
 
   low_cutoff_freq = 4
   high_cutoff_freq = 11
   bandpass1_data = apply_bandpass_butterworth_filter(smooth_data, low_cutoff_freq, high_cutoff_freq)
-  # plot(bandpass1_data[:,0], 'Bandpass-1 Accelerometer Data')
+  plot(bandpass1_data[:,0], 'Bandpass-1 Accelerometer Data')
 
   aggregated_data = aggregate_components(bandpass1_data)
 
   high_cutoff_freq = 2.5
   low_cutoff_freq = 0.66
   bandpass2_data = apply_bandpass_butterworth_filter(aggregated_data, low_cutoff_freq, high_cutoff_freq)
-  # plot(bandpass2_data, 'Bandpass-2 Accelerometer Data')
+  plot(bandpass2_data, 'Bandpass-2 Accelerometer Data')
 
   max_amp, max_freq = fft(bandpass2_data, 0.66, 2.5)
   print('Max Amplitude:', max_amp)
@@ -142,9 +142,11 @@ def calculate_heart_rate(normalized_data):
   return 60*max_freq
 
 def bio_watch(data, sampling_freq):
+  plot(data[:,0], 'Raw Accelerometer Data')
+  global sampling_frequency
   sampling_frequency = sampling_freq
   normalized_data = normalize(data)
-  # plot(normalized_data[:,0], 'Normalized Accelerometer Data')
+  plot(normalized_data[:,0], 'Normalized Accelerometer Data')
 
   hr = calculate_heart_rate(normalized_data)
   br = calculate_breathing_rate(normalized_data)
@@ -152,7 +154,6 @@ def bio_watch(data, sampling_freq):
 
 if __name__ == '__main__':
   data = pd.read_csv(input_file_path).values
-  plot(data[:,0], 'Raw Accelerometer Data')
   print("Number of records:", len(data))
 
   bio_watch(data, sampling_frequency)
