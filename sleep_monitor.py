@@ -8,6 +8,7 @@ import pandas as pd
 import math
 import warnings
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
+style.use('ggplot')
 
 # Source: https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset
 input_file_path = 'datasets/uic_dataset.csv'
@@ -17,8 +18,7 @@ segment_window_size = 1
 acceleration_threshold = 10
 motionless_sleep_threshold_in_window_percentage = 50
 tv_filter_lambda = 5
-
-style.use('ggplot')
+save_plots = False
 
 def segment(data):
   size = len(data)
@@ -40,7 +40,7 @@ def is_valid_segment(segment):
   motionless_limit = window_size - (motionless_sleep_threshold_in_window_percentage/100)*window_size
   return len(list(filter(lambda tuple: np.linalg.norm([tuple[0], tuple[1], tuple[2]]) < acceleration_threshold, segment))) >= motionless_limit
 
-def plot_ax(data, title):
+def plot_ax(data, title, plot_save_path):
   x = np.array(data[:,0])
   N = len(x)
   y = np.linspace(0, sampling_frequency, N)
@@ -49,9 +49,15 @@ def plot_ax(data, title):
   plt.title(title)
   plt.ylabel('ACCELERATION Ax (m/s^2)')
   plt.xlabel('TIME (s)')
-  plt.draw()
-  plt.pause(5)
+  draw_plot(plot_save_path)
   plt.close()
+
+def draw_plot(plot_save_path):
+  if (save_plots):
+    plt.savefig(plot_save_path)
+  else:
+    plt.draw()
+    plt.pause(5)
 
 def preprocess(data):
   print('Denoisifying data...')
@@ -126,11 +132,11 @@ def get_segment(data, segment_number, segment_size):
 
 def apply_fft_on_xyz(data):
   print('X-Axis')
-  r_x = apply_fft(data[:,0], 'FFT of the filtered data X-Axis')
+  r_x = apply_fft(data[:,0], 'FFT of the filtered data X-Axis', 'plots/sleep_monitor/fft_ax.png')
   print('Y-Axis')
-  r_y = apply_fft(data[:,1], 'FFT of the filtered data Y-Axis')
+  r_y = apply_fft(data[:,1], 'FFT of the filtered data Y-Axis', 'plots/sleep_monitor/fft_ay.png')
   print('Z-Axis')
-  r_z = apply_fft(data[:,2], 'FFT of the filtered data Z-Axis')
+  r_z = apply_fft(data[:,2], 'FFT of the filtered data Z-Axis', 'plots/sleep_monitor/fft_az.png')
   print('Average Respiratory rate (bpm):', (r_x+r_y+r_z)/3)
   return r_x, r_y, r_z
 
@@ -156,7 +162,7 @@ def fft(data):
   return f, fft_data, max_amp, max_index
 
 # Fast fourier transform
-def apply_fft(acc_data, title):
+def apply_fft(acc_data, title, plot_save_path):
   N = len(acc_data)
   f, fft_data, max_amp, max_index = fft(acc_data)
 
@@ -168,13 +174,12 @@ def apply_fft(acc_data, title):
   plt.xlabel('Frequency in Hertz [Hz]')
   plt.ylabel('Magnitude')
   plt.title(title)
-  plt.draw()
-  plt.pause(5)
+  draw_plot(plot_save_path)
   plt.close()
   return f[max_index]*60
 
 def sleep_monitor(data, sampling_freq):
-  plot_ax(data, 'Raw Accelerometer Data')
+  plot_ax(data, 'Raw Accelerometer Data', 'plots/sleep_monitor/raw_ax.png')
 
   global sampling_frequency
   sampling_frequency = sampling_freq
@@ -183,7 +188,7 @@ def sleep_monitor(data, sampling_freq):
     print('Failed in data preprocessing: no data segments to process')
     return 0, 0
   data = preprocess(data)
-  plot_ax(data, 'Processed Accelerometer Data')
+  plot_ax(data, 'Processed Accelerometer Data', 'plots/sleep_monitor/processed_data.png')
 
   print('Converting time domain signal to frequency domain by FFT...')
   # r_x, r_y, r_z = apply_fft_on_xyz(data)

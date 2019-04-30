@@ -9,6 +9,7 @@ from scipy.signal import butter, lfilter
 from scipy import signal
 
 style.use('ggplot')
+save_plots = False
 
 # Source: https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset
 input_file_path = 'datasets/uic_dataset.csv'
@@ -22,8 +23,7 @@ hr_max_freq = 2.5
 br_min_freq = 0.13
 br_max_freq = 0.66
 
-
-def plot(data, title):
+def plot(data, title, plot_save_path):
   N = len(data)
   y = np.linspace(0, sampling_frequency, N)
   plt.plot(y, data)
@@ -31,21 +31,26 @@ def plot(data, title):
   plt.title(title)
   plt.ylabel('ACCELERATION Ax (m/s^2)')
   plt.xlabel('TIME (s)')
-  plt.draw()
-  plt.pause(5)
+  draw_plot(plot_save_path)
   plt.close()
 
-def fft(data, f_low, f_high):
+def draw_plot(plot_save_path):
+  if (save_plots):
+    plt.savefig(plot_save_path)
+  else:
+    plt.draw()
+    plt.pause(5)
+
+def fft(data, f_low, f_high, plot_save_path):
   N = len(data)
   fft_data = sp.fftpack.fft(data)
   f = np.linspace(0, sampling_frequency, N)
-
   plt.plot(f[:N // 2], np.abs(fft_data)[:N // 2] * 1 / N)
   plt.xlabel('Frequency in Hertz [Hz]')
   plt.ylabel('Amplitude')
   plt.title('FFT')
-  plt.draw()
-  plt.pause(5)
+
+  draw_plot(plot_save_path)
   plt.close()
 
   max_amp = 0
@@ -80,7 +85,7 @@ def normalize(data):
   data[:,2] = sp.stats.zscore(data[:,2])
   return data
 
-def apply_pass_filter(unfiltered_data, btype, cutoff):
+def apply_pass_filter(unfiltered_data, btype, cutoff, plot_save_path):
   t = np.linspace(0, sampling_frequency, len(unfiltered_data), endpoint=False)
   filtered_data = np.full_like(unfiltered_data, 0)
   axes = {'x': 0, 'y': 1, 'z': 2}
@@ -97,13 +102,12 @@ def apply_pass_filter(unfiltered_data, btype, cutoff):
     plt.legend()
     plt.subplots_adjust(hspace=0.35)
   plt.title("%s pass filtering" % btype)
-  plt.draw()
-  plt.pause(10)
+  draw_plot(plot_save_path)
   plt.close()
   return filtered_data
 
 def seismotracker(data, sampling_freq):
-  plot(data[:,0], 'Unfiltered Raw Accelerometer Data')
+  plot(data[:,0], 'Unfiltered Raw Accelerometer Data', 'plots/seismotracker/raw_ax.png')
 
   global sampling_frequency
   sampling_frequency = sampling_freq
@@ -111,35 +115,35 @@ def seismotracker(data, sampling_freq):
   print('Breathing Rate:')
 
   print("X-Axis:")    
-  breathing_rate_x = fft(normalized_data[:,0], br_min_freq, br_max_freq)
+  breathing_rate_x = fft(normalized_data[:,0], br_min_freq, br_max_freq, 'plots/seismotracker/br_fft_xaxis.png')
   print("Respiration Rate (bpm):", breathing_rate_x)
 
   print("Y-Axis:")
-  breathing_rate_y = fft(normalized_data[:,1], br_min_freq, br_max_freq)
+  breathing_rate_y = fft(normalized_data[:,1], br_min_freq, br_max_freq, 'plots/seismotracker/br_fft_yaxis.png')
   print("Respiration Rate (bpm):", breathing_rate_y)
 
   print("Z-Axis:")    
-  breathing_rate_z = fft(normalized_data[:,2], br_min_freq, br_max_freq)
+  breathing_rate_z = fft(normalized_data[:,2], br_min_freq, br_max_freq, 'plots/seismotracker/br_fft_zaxis.png')
   print("Respiration Rate (bpm):", breathing_rate_z)
   avg_br = (breathing_rate_x + breathing_rate_y + breathing_rate_z)/3
   print("Average Respiration Rate (bpm):", avg_br)
 
   print('\nHeart Rate:')
-  highpass_filtered_data = apply_pass_filter(normalized_data, 'high', highpass_cutoff_frequency)
-  lowpass_filtered_data = apply_pass_filter(highpass_filtered_data, 'low', lowpass_cutoff_frequency)
+  highpass_filtered_data = apply_pass_filter(normalized_data, 'high', highpass_cutoff_frequency, 'plots/seismotracker/hr_highpass_filtering.png')
+  lowpass_filtered_data = apply_pass_filter(highpass_filtered_data, 'low', lowpass_cutoff_frequency, 'plots/seismotracker/hr_lowpass_filtering.png')
 
   # squared_signal = lowpass_filtered_data * lowpass_filtered_data # TODO: Squaring signal?
 
   print("X-Axis:")    
-  heart_rate_x = fft(lowpass_filtered_data[:,0], hr_min_freq, hr_max_freq)
+  heart_rate_x = fft(lowpass_filtered_data[:,0], hr_min_freq, hr_max_freq, 'plots/seismotracker/hr_fft_xaxis.png')
   print("Heart Rate (bpm):", heart_rate_x)
 
   print("Y-Axis:")    
-  heart_rate_y = fft(lowpass_filtered_data[:,1], hr_min_freq, hr_max_freq)
+  heart_rate_y = fft(lowpass_filtered_data[:,1], hr_min_freq, hr_max_freq, 'plots/seismotracker/hr_fft_xaxis.png')
   print("Heart Rate (bpm):", heart_rate_y)
 
   print("Z-Axis:")    
-  heart_rate_z = fft(lowpass_filtered_data[:,2], hr_min_freq, hr_max_freq)
+  heart_rate_z = fft(lowpass_filtered_data[:,2], hr_min_freq, hr_max_freq, 'plots/seismotracker/hr_fft_zaxis.png')
   print("Heart Rate (bpm):", heart_rate_z)
   avg_hr = (heart_rate_x + heart_rate_y + heart_rate_z)/3
   print("Average Heart Rate (bpm):", avg_hr)
@@ -148,6 +152,6 @@ def seismotracker(data, sampling_freq):
 if __name__ == '__main__':
   data = pd.read_csv(input_file_path).values
   print("Number of records:", len(data))
-  seismotracker(data)
+  seismotracker(data, sampling_frequency)
 
 
