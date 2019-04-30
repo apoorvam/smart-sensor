@@ -11,8 +11,10 @@ import warnings
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 style.use('ggplot')
 
-input_file_path = "HMP_Dataset/Liedown_bed/Accelerometer-2011-06-02-17-21-57-liedown_bed-m1.txt"
-sampling_frequency = 32
+# Source: https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset
+input_file_path = 'datasets/uic_dataset.csv'
+
+sampling_frequency = 50
 average_filter_window_duration_hr = int((1/7)*sampling_frequency)
 average_filter_window_duration_br = int((40/60)*sampling_frequency)
 T = 1/sampling_frequency
@@ -114,39 +116,44 @@ def calculate_breathing_rate(normalized_data):
   print("Max amplitude chosen:", br_max_amp)
   print("Frequency of chosen amplitude:", amp_to_freq[br_max_amp])
   print("Respiratory Rate (bpm):", 60*amp_to_freq[br_max_amp])
+  return 60*amp_to_freq[br_max_amp]
 
 def calculate_heart_rate(normalized_data):
   smooth_data = apply_average_filter(normalized_data, average_filter_window_duration_hr)
   smooth_data = np.array(list(filter(lambda row: np.isfinite(np.sum(row)), smooth_data)), dtype=np.float64)
-  plot(smooth_data[:,0], 'Smoothened Accelerometer Data')
+  # plot(smooth_data[:,0], 'Smoothened Accelerometer Data')
 
   low_cutoff_freq = 4
   high_cutoff_freq = 11
   bandpass1_data = apply_bandpass_butterworth_filter(smooth_data, low_cutoff_freq, high_cutoff_freq)
-  plot(bandpass1_data[:,0], 'Bandpass-1 Accelerometer Data')
+  # plot(bandpass1_data[:,0], 'Bandpass-1 Accelerometer Data')
 
   aggregated_data = aggregate_components(bandpass1_data)
 
   high_cutoff_freq = 2.5
   low_cutoff_freq = 0.66
   bandpass2_data = apply_bandpass_butterworth_filter(aggregated_data, low_cutoff_freq, high_cutoff_freq)
-  plot(bandpass2_data, 'Bandpass-2 Accelerometer Data')
+  # plot(bandpass2_data, 'Bandpass-2 Accelerometer Data')
 
   max_amp, max_freq = fft(bandpass2_data, 0.66, 2.5)
   print('Max Amplitude:', max_amp)
   print('Max Frequency:', max_freq)
   print('Heart Rate (bpm):', 60*max_freq)
-  return
+  return 60*max_freq
+
+def bio_watch(data, sampling_freq):
+  sampling_frequency = sampling_freq
+  normalized_data = normalize(data)
+  # plot(normalized_data[:,0], 'Normalized Accelerometer Data')
+
+  hr = calculate_heart_rate(normalized_data)
+  br = calculate_breathing_rate(normalized_data)
+  return hr, br
 
 if __name__ == '__main__':
-  data = np.loadtxt(input_file_path)
+  data = pd.read_csv(input_file_path).values
   plot(data[:,0], 'Raw Accelerometer Data')
   print("Number of records:", len(data))
 
-  normalized_data = normalize(data)
-  plot(normalized_data[:,0], 'Normalized Accelerometer Data')
-
-  calculate_heart_rate(normalized_data)
-  calculate_breathing_rate(normalized_data)
-
+  bio_watch(data, sampling_frequency)
 

@@ -2,50 +2,40 @@
 
 Analysis of various HR/BR estimation algorithms from accelerometer data. The goal is to extract/summarize the resting-state respiration rate and/or heart rate from wrist-accelerometer data. 
 
-Dataset used: https://archive.ics.uci.edu/ml/datasets/Dataset+for+ADL+Recognition+with+Wrist-worn+Accelerometer
+#### Datasets
+![Dataset for ADL Recognition with Wrist-worn Accelerometer Data Set](https://archive.ics.uci.edu/ml/datasets/Dataset+for+ADL+Recognition+with+Wrist-worn+Accelerometer) - Dataset 1
+![UCI Mhealth Dataset](https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset) - Dataset 2 and 3
 
-1. [Sleep Monitor](http://mcn.cse.psu.edu/paper/xiaosun/ubicomp-xiao17.pdf)
-2. [Bio Watch](https://ieeexplore.ieee.org/abstract/document/7349394)
-2. [SeismoTracker](https://dl.acm.org/citation.cfm?id=2892279)
+#### Papers
+1. [Bio Watch](https://ieeexplore.ieee.org/abstract/document/7349394)
+2. [Sleep Monitor](http://mcn.cse.psu.edu/paper/xiaosun/ubicomp-xiao17.pdf)
+3. [SeismoTracker](https://dl.acm.org/citation.cfm?id=2892279)
 
-## Sleep Monitor
+#### Results
 
-### System Overview for Respiratory rate
+Dataset 1:
 
-1. Raw Accelerometer Data
+|               |Heart Rate(bpm)|  Breathing Rate(bpm)|
+|---------------|---------------|---------------------|
+|Bio Watch|            84.176183  |          |17.804154|
+|Sleep Monitor|         - |           |15.075377|
+|SeismoTracker |      114.946272|            |14.327581|
 
-![Raw Accelerometer Data](plots/sleep_monitor/raw_ax.png)
+Dataset 2:
 
-2. Segmentation
+|               |Heart Rate(bpm)|  Breathing Rate(bpm)|
+|---------------|---------------|---------------------|
+|io Watch            |69.958848            |17.216643|
+|leep Monitor         |0.000000            |15.075377|
+|SeismoTracker|        68.027211            |12.244898|
 
-3. Processing - Total Variation filter
+Dataset 3:
 
-![Processed data](plots/sleep_monitor/processed_data.png)
-
-4. FFT - Respiratory rate estimation on each axis
-
-![FFT X-Axis](plots/sleep_monitor/fft_xaxis.png)
-![FFT Y-Axis](plots/sleep_monitor/fft_yaxis.png)
-![FFT Z-Axis](plots/sleep_monitor/fft_zaxis.png)
-
-5. Multi axis fusion - Kalman filter
-
-### Output
-
-```sh
-$ python3 sleep_monitor.py
-Number of records: 736
-Segmenting data...
-Number of segments: 23
-Size of each segment: 32
-Removing segments with motion...
-Number of filtered segments: 10
-Number of records: 320
-Denoisifying data...
-Converting time domain signal to frequency domain by FFT...
-Performing multi-axis fusion by Kalman filter...
-Breathing rate from Kalman filter: 15.1181102362
-```
+|               |Heart Rate(bpm)|  Breathing Rate(bpm)|
+|---------------|---------------|---------------------|
+|Bio Watch      |      71.428571|            14.062500|
+|Sleep Monitor  |      0.000000 |          38.461538|
+|SeismoTracker  |     66.371681 |           16.224189|
 
 ## Bio Watch
 
@@ -89,17 +79,55 @@ X, Y, Z axes of accelerometer values are normalized with z-scores to give them s
 
 ```sh
 $ python3 bio_watch.py
-Number of records: 736
-Max Amplitude: 21.9688066668
-Max Frequency: 0.874316939891
-Heart Rate (bpm): 52.4590163934
+Max Amplitude: 22.0776535924
+Max Frequency: 1.40293637847
+Heart Rate (bpm): 84.176182708
 Max Amplitude within 0.13 and 0.66 Hz frequency:
-X-Axis: 83.7839707083
-Y-Axis: 134.28961208
-Z-Axis: 193.645331484
-Max amplitude chosen: 193.645331484
-Frequency of chosen amplitude: 0.179775280899
-Respiratory Rate (bpm): 10.7865168539
+X-Axis: 166.010352621
+Y-Axis: 99.0713761738
+Z-Axis: 93.7763489353
+Max amplitude chosen: 166.010352621
+Frequency of chosen amplitude: 0.296735905045
+Respiratory Rate (bpm): 17.8041543027
+```
+
+## Sleep Monitor
+
+### System Overview for Respiratory rate
+
+1. Raw Accelerometer Data
+
+![Raw Accelerometer Data](plots/sleep_monitor/raw_ax.png)
+
+2. Segmentation
+
+3. Processing - Total Variation filter
+
+![Processed data](plots/sleep_monitor/processed_data.png)
+
+4. FFT - Respiratory rate estimation on each axis
+
+![FFT X-Axis](plots/sleep_monitor/fft_xaxis.png)
+![FFT Y-Axis](plots/sleep_monitor/fft_yaxis.png)
+![FFT Z-Axis](plots/sleep_monitor/fft_zaxis.png)
+
+5. Multi axis fusion - Kalman filter
+
+### Output
+
+```sh
+$ python3 sleep_monitor.py
+Number of records: 736
+Segmenting data...
+Number of segments: 23
+Size of each segment: 32
+Removing segments with motion...
+Number of filtered segments: 10
+Number of records: 320
+Denoisifying data...
+Converting time domain signal to frequency domain by FFT...
+Performing multi-axis fusion by Kalman filter...
+Breathing rate from Kalman filter: 15.1181102362
 ```
 
 ## Seismotracker

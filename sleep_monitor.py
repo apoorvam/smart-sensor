@@ -4,12 +4,15 @@ from matplotlib import style
 import scipy.fftpack
 import scipy as sp
 from scipy import signal
+import pandas as pd
 import math
 import warnings
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
-input_file_path = "HMP_Dataset/Liedown_bed/Accelerometer-2011-06-02-17-21-57-liedown_bed-m1.txt"
-sampling_frequency = 32
+# Source: https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset
+input_file_path = 'datasets/uic_dataset.csv'
+
+sampling_frequency = 50
 segment_window_size = 1
 acceleration_threshold = 10
 motionless_sleep_threshold_in_window_percentage = 50
@@ -21,12 +24,7 @@ def segment(data):
   size = len(data)
   print('Segmenting data...')
   
-  # CONVERT THE ACCELEROMETER DATA INTO REAL ACCELERATION VALUES
-  # mapping from [0. .63] to[-14.709.. + 14.709]
-  # real_val = -1.5 g + (coded_val / 63) * 3 g
-  real_data = list(map(lambda v: -14.709 + (v / 63) * (2 * 14.709), data))
-
-  segmented_data = np.array_split(real_data, size / (segment_window_size * sampling_frequency))
+  segmented_data = np.array_split(data, size / (segment_window_size * sampling_frequency))
   print("Number of segments:", len(segmented_data))
   print("Size of each segment:", len(segmented_data[0]))
 
@@ -121,6 +119,7 @@ def apply_kalman_filter(data):
     p[segment_number] = (1 - k[segment_number]) * pminus[segment_number]
 
   print("Breathing rate from Kalman filter:", rhat[n_segments-1])
+  return rhat[n_segments-1]
 
 def get_segment(data, segment_number, segment_size):
   return data[segment_number*segment_size: segment_number*segment_size+segment_size]
@@ -172,15 +171,21 @@ def apply_fft(acc_data, title):
   plt.close()
   return f[max_index]*60
 
-if __name__ == '__main__':
-  data = np.loadtxt(input_file_path)
-  print("Number of records:", len(data))
-  plot_ax(data, 'Raw Accelerometer Data')
-
+def sleep_monitor(data, sampling_freq):
+  sampling_frequency = sampling_freq
   data = segment(data)
   data = preprocess(data)
   plot_ax(data, 'Processed Accelerometer Data')
 
   print('Converting time domain signal to frequency domain by FFT...')
   # r_x, r_y, r_z = apply_fft_on_xyz(data)
-  apply_kalman_filter(data)
+  br = apply_kalman_filter(data)
+  return 0, br
+
+if __name__ == '__main__':
+  data = np.loadtxt(input_file_path)
+  print("Number of records:", len(data))
+  # plot_ax(data, 'Raw Accelerometer Data')
+
+  sleep_monitor(data, sampling_frequency)
+
