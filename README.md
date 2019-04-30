@@ -15,27 +15,27 @@ Analysis of various HR/BR estimation algorithms from accelerometer data. The goa
 
 Dataset 1: (datasets/uic_dataset.csv)
 
-|               |Heart Rate(bpm)|  Breathing Rate(bpm)|
-|---------------|---------------|---------------------|
-|Bio Watch|           84.176183      |      17.804154
-|SeismoTracker |     114.946272     |       14.327581
-|Sleep Monitor|         -|           |15.075377|
+|               | Heart Rate(bpm) | Breathing Rate(bpm) |
+|---------------|-----------------|---------------------|
+| Bio Watch     | 84.176183       | 17.804154           |
+| SeismoTracker | 114.946272      | 14.327581           |
+| Sleep Monitor | -               | 15.075377           |
 
 Dataset 2: (datasets/hmp_dataset1.csv)
 
-|               |Heart Rate(bpm)|  Breathing Rate(bpm)|
-|---------------|---------------|---------------------|
-|Bio Watch            |44.835165            |11.034483|
-|SeismoTracker        |54.059946            |10.463215|
-|Sleep Monitor         |-            |15.118110|
+|               | Heart Rate(bpm) | Breathing Rate(bpm) |
+|---------------|-----------------|---------------------|
+| Bio Watch     | 44.835165       | 11.034483           |
+| SeismoTracker | 54.059946       | 10.463215           |
+| Sleep Monitor | -               | 15.118110           |
 
 Dataset 3: (datasets/hmp_dataset2.csv)
 
-|               |Heart Rate(bpm)|  Breathing Rate(bpm)|
-|---------------|---------------|---------------------|
-|Bio Watch      |      45.782414 |            9.014085|
-|SeismoTracker  |    100.206795 |           10.398818|
-|Sleep Monitor  |      -|          15.118110|
+|               | Heart Rate(bpm) | Breathing Rate(bpm) |
+|---------------|-----------------|---------------------|
+| Bio Watch     | 45.782414       | 9.014085            |
+| SeismoTracker | 100.206795      | 10.398818           |
+| Sleep Monitor | -               | 15.118110           |
 
 ## Bio Watch
 
