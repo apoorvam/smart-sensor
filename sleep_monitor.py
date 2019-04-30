@@ -179,6 +179,9 @@ def sleep_monitor(data, sampling_freq):
   global sampling_frequency
   sampling_frequency = sampling_freq
   data = segment(data)
+  if (len(data) == 0):
+    print('Failed in data preprocessing: no data segments to process')
+    return 0, 0
   data = preprocess(data)
   plot_ax(data, 'Processed Accelerometer Data')
 
@@ -188,7 +191,7 @@ def sleep_monitor(data, sampling_freq):
   return 0, br
 
 if __name__ == '__main__':
-  data = np.loadtxt(input_file_path)
+  data = pd.read_csv(input_file_path).values
   print("Number of records:", len(data))
   sleep_monitor(data, sampling_frequency)
 

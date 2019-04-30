@@ -19,7 +19,7 @@ Dataset 1: (datasets/uic_dataset.csv)
 |---------------|---------------|---------------------|
 |Bio Watch|           84.176183      |      17.804154
 |SeismoTracker |     114.946272     |       14.327581
-|Sleep Monitor|         - |           |15.075377|
+|Sleep Monitor|         -|           |15.075377|
 
 Dataset 2: (datasets/hmp_dataset1.csv)
 
