@@ -27,7 +27,7 @@ if __name__ == '__main__':
       print('\n%s:\n' % algo)
       hr, br = algo_fn(data.copy(), sampling_freq)
       rates.append([hr, br])
-    res = pd.DataFrame(rates, algorithms, measurements)
+    res = pd.DataFrame(rates, sorted(algorithms.keys()), measurements)
     results[dataset] = res
     print(res)
 

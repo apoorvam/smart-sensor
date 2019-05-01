@@ -25,7 +25,7 @@ br_max_freq = 0.66
 
 def plot(data, title, plot_save_path):
   N = len(data)
-  y = np.linspace(0, sampling_frequency, N)
+  y = np.linspace(0, N/sampling_frequency, N)
   plt.plot(y, data)
 
   plt.title(title)
@@ -44,7 +44,7 @@ def draw_plot(plot_save_path):
 def fft(data, f_low, f_high, plot_save_path):
   N = len(data)
   fft_data = sp.fftpack.fft(data)
-  f = np.linspace(0, sampling_frequency, N)
+  f = np.linspace(0, N/sampling_frequency, N)
   plt.plot(f[:N // 2], np.abs(fft_data)[:N // 2] * 1 / N)
   plt.xlabel('Frequency in Hertz [Hz]')
   plt.ylabel('Amplitude')
@@ -86,7 +86,7 @@ def normalize(data):
   return data
 
 def apply_pass_filter(unfiltered_data, btype, cutoff, plot_save_path):
-  t = np.linspace(0, sampling_frequency, len(unfiltered_data), endpoint=False)
+  t = np.linspace(0, len(unfiltered_data)/sampling_frequency, len(unfiltered_data), endpoint=False)
   filtered_data = np.full_like(unfiltered_data, 0)
   axes = {'x': 0, 'y': 1, 'z': 2}
 

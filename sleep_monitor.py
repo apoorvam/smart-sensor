@@ -43,7 +43,7 @@ def is_valid_segment(segment):
 def plot_ax(data, title, plot_save_path):
   x = np.array(data[:,0])
   N = len(x)
-  y = np.linspace(0, sampling_frequency, N)
+  y = np.linspace(0, N/sampling_frequency, N)
   plt.plot(y, x)
 
   plt.title(title)
@@ -146,7 +146,7 @@ def fft(data):
 
   data = sp.signal.detrend(data)
   fft_data = sp.fftpack.fft(data)
-  f = np.linspace(0, sampling_frequency, N)
+  f = np.linspace(0, N/sampling_frequency, N)
 
   max_amp = 0
   max_index = 0

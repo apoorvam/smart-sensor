@@ -32,7 +32,7 @@ def apply_average_filter(data, window):
 
 def plot(data, title, plot_save_path):
   N = len(data)
-  y = np.linspace(0, sampling_frequency, N)
+  y = np.linspace(0, N/sampling_frequency, N)
   plt.plot(y, data)
 
   plt.title(title)
@@ -74,7 +74,7 @@ def fft(acc_data, f_low, f_high, plot_save_path):
   N = len(acc_data)
 
   fft_data = sp.fftpack.fft(acc_data)
-  f = np.linspace(0, sampling_frequency, N)
+  f = np.linspace(0, N/sampling_frequency, N)
 
   plt.plot(f[:N // 2], np.abs(fft_data)[:N // 2] * 1 / N)
   plt.xlabel('Frequency in Hertz [Hz]')
