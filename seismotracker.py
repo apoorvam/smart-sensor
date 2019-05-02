@@ -107,10 +107,10 @@ def apply_pass_filter(unfiltered_data, btype, cutoff, plot_save_path):
   return filtered_data
 
 def seismotracker(data, sampling_freq):
-  plot(data[:,0], 'Unfiltered Raw Accelerometer Data', 'plots/seismotracker/raw_ax.png')
-
   global sampling_frequency
   sampling_frequency = sampling_freq
+
+  plot(data[:,0], 'Unfiltered Raw Accelerometer Data', 'plots/seismotracker/raw_ax.png')
   normalized_data = normalize(data)
   print('Breathing Rate:')
 

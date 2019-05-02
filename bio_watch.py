@@ -147,9 +147,9 @@ def calculate_heart_rate(normalized_data):
   return 60*max_freq
 
 def bio_watch(data, sampling_freq):
-  plot(data[:,0], 'Raw Accelerometer Data', 'plots/bio_watch/raw_ax.png')
   global sampling_frequency
   sampling_frequency = sampling_freq
+  plot(data[:,0], 'Raw Accelerometer Data', 'plots/bio_watch/raw_ax.png')
   normalized_data = normalize(data)
   plot(normalized_data[:,0], 'Normalized Accelerometer Data', 'plots/bio_watch/normalized.png')
 

@@ -97,7 +97,7 @@ def apply_kalman_filter(data):
   r_measurement = np.zeros((n_segments, 3)) # observation measurements
 
   # initial guesses
-  p[0] = 1.0  
+  p[0] = 1.0
   rhat[0] = 40
   for segment_number in range(1, n_segments):
     segment = get_segment(data, segment_number-1, segment_size_for_kalman)
@@ -141,10 +141,8 @@ def apply_fft_on_xyz(data):
   return r_x, r_y, r_z
 
 def fft(data):
-  data = np.array(list(filter(lambda row: np.isfinite(np.sum(row)), data)), dtype=np.float64)
   N = len(data)
-
-  data = sp.signal.detrend(data)
+  data = sp.signal.detrend(data)  
   fft_data = sp.fftpack.fft(data)
   f = np.linspace(0, N/sampling_frequency, N)
 
@@ -179,10 +177,10 @@ def apply_fft(acc_data, title, plot_save_path):
   return f[max_index]*60
 
 def sleep_monitor(data, sampling_freq):
-  plot_ax(data, 'Raw Accelerometer Data', 'plots/sleep_monitor/raw_ax.png')
-
   global sampling_frequency
   sampling_frequency = sampling_freq
+
+  plot_ax(data, 'Raw Accelerometer Data', 'plots/sleep_monitor/raw_ax.png')
   data = segment(data)
   if (len(data) == 0):
     print('Failed in data preprocessing: no data segments to process')
