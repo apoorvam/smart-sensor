@@ -3,8 +3,8 @@
 Analysis of various HR/BR estimation algorithms from accelerometer data. The goal is to extract/summarize the resting-state respiration rate and/or heart rate from wrist-accelerometer data. 
 
 #### Datasets
-* [UCI Mhealth Dataset](https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset) - Dataset 1
-* [Dataset for ADL Recognition with Wrist-worn Accelerometer Data Set](https://archive.ics.uci.edu/ml/datasets/Dataset+for+ADL+Recognition+with+Wrist-worn+Accelerometer) - Dataset 2 and 3
+* [UCI Mhealth Dataset](https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset) - Dataset 1 - Wrist Accelerometer data of 62 seconds at 50Hz sampling frequency
+* [Dataset for ADL Recognition with Wrist-worn Accelerometer Data Set](https://archive.ics.uci.edu/ml/datasets/Dataset+for+ADL+Recognition+with+Wrist-worn+Accelerometer) - Dataset 2 and 3 - Accelerometer data of 22 and 21 seconds resepctively of 32Hz sampling frequency
 
 #### Publications
 * [Bio Watch](https://ieeexplore.ieee.org/abstract/document/7349394)
@@ -17,25 +17,25 @@ Dataset 1: (datasets/uic_dataset.csv)
 
 |               | Heart Rate(bpm) | Breathing Rate(bpm) |
 |---------------|-----------------|---------------------|
-| Bio Watch     | 84.176183       | 17.804154           |
-| SeismoTracker | 114.946272      | 14.327581           |
-| Sleep Monitor | -               | 15.075377           |
+| Bio Watch     | 103.233670      | 21.607122           |
+| SeismoTracker | 106.834777      | 12.804168           |
+| Sleep Monitor | -               | 8.442211            |
 
 Dataset 2: (datasets/hmp_dataset1.csv)
 
 |               | Heart Rate(bpm) | Breathing Rate(bpm) |
 |---------------|-----------------|---------------------|
-| Bio Watch     | 44.835165       | 11.034483           |
-| SeismoTracker | 54.059946       | 10.463215           |
-| Sleep Monitor | -               | 15.118110           |
+| Bio Watch     | 76.980598       | 11.266164           |
+| SeismoTracker | 51.319823       | 18.775545           |
+| Sleep Monitor | -               | 9.448819            |
 
 Dataset 3: (datasets/hmp_dataset2.csv)
 
 |               | Heart Rate(bpm) | Breathing Rate(bpm) |
 |---------------|-----------------|---------------------|
-| Bio Watch     | 45.782414       | 9.014085            |
-| SeismoTracker | 100.206795      | 10.398818           |
-| Sleep Monitor | -               | 15.118110           |
+| Bio Watch     | 88.256334       | 9.389671            |
+| SeismoTracker | 73.858936       | 11.892541           |
+| Sleep Monitor | -               | 9.448819            |
 
 ## Bio Watch
 
@@ -79,16 +79,16 @@ X, Y, Z axes of accelerometer values are normalized with z-scores to give them s
 
 ```sh
 $ python3 bio_watch.py
-Max Amplitude: 22.0776535924
-Max Frequency: 1.40293637847
-Heart Rate (bpm): 84.176182708
+Max Amplitude: 22.077653592365234
+Max Frequency: 1.7205611745513867
+Heart Rate (bpm): 103.23367047308321
 Max Amplitude within 0.13 and 0.66 Hz frequency:
-X-Axis: 166.010352621
-Y-Axis: 99.0713761738
-Z-Axis: 93.7763489353
-Max amplitude chosen: 166.010352621
-Frequency of chosen amplitude: 0.296735905045
-Respiratory Rate (bpm): 17.8041543027
+X-Axis: 166.01035262050667
+Y-Axis: 120.777797237787
+Z-Axis: 115.25675615869969
+Max amplitude chosen: 166.01035262050667
+Frequency of chosen amplitude: 0.3601186943620178
+Respiratory Rate (bpm): 21.60712166172107
 ```
 
 ## Sleep Monitor
@@ -113,17 +113,29 @@ Respiratory Rate (bpm): 17.8041543027
 
 ```sh
 $ python3 sleep_monitor.py
-Number of records: 3072
 Segmenting data...
-Number of segments: 61
-Size of each segment: 51
+Number of segments: 2
+Size of each segment: 1536
 Removing segments with motion...
-Number of filtered segments: 61
+Number of filtered segments: 2
 Number of records: 3072
 Denoisifying data...
 Converting time domain signal to frequency domain by FFT...
+X-Axis
+Max Amplitude: 19.409012679761673
+Respiratory rate: 0.1400455877564311
+Respiratory rate (bpm): 8.402735265385866
+Y-Axis
+Max Amplitude: 11.459828693993831
+Respiratory rate: 0.1400455877564311
+Respiratory rate (bpm): 8.402735265385866
+Z-Axis
+Max Amplitude: 15.715620986587833
+Respiratory rate: 0.1400455877564311
+Respiratory rate (bpm): 8.402735265385866
+Average Respiratory rate (bpm): 8.402735265385866
 Performing multi-axis fusion by Kalman filter...
-Breathing rate from Kalman filter: 15.0753768844
+Breathing rate from Kalman filter: 8.442211055276381
 ```
 
 ## Seismotracker
@@ -182,32 +194,32 @@ Z-Axis:
 $ python3 seismotracker.py
 Breathing Rate:
 X-Axis:
-Max Amplitude: 206.352510961
-Frequency: 0.293064148486
-Respiration Rate (bpm): 17.5838489092
+Max Amplitude: 206.3525109611608
+Frequency: 0.3601172256593943
+Respiration Rate (bpm): 21.60703353956366
 Y-Axis:
-Max Amplitude: 130.772935511
-Frequency: 0.276782806903
-Respiration Rate (bpm): 16.6069684142
+Max Amplitude: 181.17474579186927
+Frequency: 0.1400455877564311
+Respiration Rate (bpm): 8.402735265385866
 Z-Axis:
-Max Amplitude: 155.664930948
-Frequency: 0.146532074243
-Respiration Rate (bpm): 8.79192445458
-Average Respiration Rate (bpm): 14.3275805926
+Max Amplitude: 206.0686156672978
+Frequency: 0.1400455877564311
+Respiration Rate (bpm): 8.402735265385866
+Average Respiration Rate (bpm): 12.80416802344513
 
 Heart Rate:
 X-Axis:
-Max Amplitude: 1.35768415257
-Frequency: 2.45848257896
-Heart Rate (bpm): 147.508954738
+Max Amplitude: 1.335674895504559
+Frequency: 1.7405665906870724
+Heart Rate (bpm): 104.43399544122434
 Y-Axis:
-Max Amplitude: 1.92224270757
-Frequency: 2.37707587105
-Heart Rate (bpm): 142.624552263
+Max Amplitude: 1.4995635787466068
+Frequency: 2.480807554542494
+Heart Rate (bpm): 148.84845327254965
 Z-Axis:
-Max Amplitude: 1.49709366808
-Frequency: 0.911755128623
-Heart Rate (bpm): 54.7053077174
-Average Heart Rate (bpm): 114.946271573
+Max Amplitude: 1.497093668079774
+Frequency: 1.120364702051449
+Heart Rate (bpm): 67.22188212308693
+Average Heart Rate (bpm): 106.8347769456203
 
 ```

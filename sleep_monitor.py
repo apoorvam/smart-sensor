@@ -12,19 +12,23 @@ style.use('ggplot')
 
 # Source: https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset
 input_file_path = 'datasets/uic_dataset.csv'
+# input_file_path = 'datasets/hmp_dataset1.csv'
 
 sampling_frequency = 50
-segment_window_size = 1
+segment_window_size = 30
 acceleration_threshold = 10
-motionless_sleep_threshold_in_window_percentage = 50
+percentage_of_allowed_samples_with_motion_in_window = 25
+motionless_sleep_threshold_samples_in_window = (percentage_of_allowed_samples_with_motion_in_window/100)*segment_window_size*sampling_frequency
 tv_filter_lambda = 5
 save_plots = False
 
 def segment(data):
   size = len(data)
   print('Segmenting data...')
-  
-  segmented_data = np.array_split(data, size / (segment_window_size * sampling_frequency))
+  samples_in_window = int(size / (segment_window_size * sampling_frequency))
+  if samples_in_window < 1:
+    samples_in_window = 1
+  segmented_data = np.array_split(data, samples_in_window)
   print("Number of segments:", len(segmented_data))
   print("Size of each segment:", len(segmented_data[0]))
 
@@ -35,10 +39,9 @@ def segment(data):
   print("Number of records:", len(flattened_data))
   return flattened_data
 
+# Returns true if the given segment of data is of motionless acceleration
 def is_valid_segment(segment):
-  window_size = len(segment)
-  motionless_limit = window_size - (motionless_sleep_threshold_in_window_percentage/100)*window_size
-  return len(list(filter(lambda tuple: np.linalg.norm([tuple[0], tuple[1], tuple[2]]) < acceleration_threshold, segment))) >= motionless_limit
+  return len(list(filter(lambda tuple: np.linalg.norm([tuple[0], tuple[1], tuple[2]]) > acceleration_threshold, segment))) <= motionless_sleep_threshold_samples_in_window
 
 def plot_ax(data, title, plot_save_path):
   x = np.array(data[:,0])
@@ -59,6 +62,7 @@ def draw_plot(plot_save_path):
     plt.draw()
     plt.pause(5)
 
+# Preprocess raw accelerometer data
 def preprocess(data):
   print('Denoisifying data...')
   data[:,0] = denoisify(data[:,0], tv_filter_lambda, len(data))
@@ -84,6 +88,7 @@ def denoisify(y, lambda_value, nit):
     z = np.vectorize(clip)(z, T)
   return x
 
+# Apply Kalman filter for multi axis data fusion
 def apply_kalman_filter(data):
   print("Performing multi-axis fusion by Kalman filter...")
   segment_size_for_kalman = 4 * sampling_frequency
@@ -98,16 +103,16 @@ def apply_kalman_filter(data):
 
   # initial guesses
   p[0] = 1.0
-  rhat[0] = 40
+  rhat[0] = 30
   for segment_number in range(1, n_segments):
     segment = get_segment(data, segment_number-1, segment_size_for_kalman)
     f_x, fft_data_x, max_amp_x, max_index_x = fft(segment[:,0])
     f_y, fft_data_y, max_amp_y, max_index_y = fft(segment[:,1])
     f_z, fft_data_z, max_amp_z, max_index_z = fft(segment[:,2])
     r_measurement[segment_number] = [f_x[max_index_x] * 60, f_y[max_index_y] * 60, f_z[max_index_z] * 60]  
-    variance_x = np.var(r_measurement[:,0])
-    variance_y = np.var(r_measurement[:,1])
-    variance_z = np.var(r_measurement[:,2])
+    variance_x = np.var(segment[:,0])
+    variance_y = np.var(segment[:,1])
+    variance_z = np.var(segment[:,2])
     total_variance = variance_x + variance_y + variance_z
 
     # time update
@@ -130,6 +135,7 @@ def apply_kalman_filter(data):
 def get_segment(data, segment_number, segment_size):
   return data[segment_number*segment_size: segment_number*segment_size+segment_size]
 
+# Applies Fast Fourier Transform on data from axis x, y, z independently
 def apply_fft_on_xyz(data):
   print('X-Axis')
   r_x = apply_fft(data[:,0], 'FFT of the filtered data X-Axis', 'plots/sleep_monitor/fft_ax.png')
@@ -141,6 +147,7 @@ def apply_fft_on_xyz(data):
   return r_x, r_y, r_z
 
 def fft(data):
+  data = data - data.mean()
   N = len(data)
   data = sp.signal.detrend(data)  
   fft_data = sp.fftpack.fft(data)
@@ -149,7 +156,11 @@ def fft(data):
   max_amp = 0
   max_index = 0
   index = 0
-  for c in fft_data[:N//2]:
+  for c in fft_data[:N // 2]:
+    if f[index] < 0.13 or f[index] > 0.5:
+      index = index + 1
+      continue;
+
     real = np.real(c)
     img = np.imag(c)
     amp = np.sqrt(real*real + img*img)
@@ -189,7 +200,7 @@ def sleep_monitor(data, sampling_freq):
   plot_ax(data, 'Processed Accelerometer Data', 'plots/sleep_monitor/processed_data.png')
 
   print('Converting time domain signal to frequency domain by FFT...')
-  # r_x, r_y, r_z = apply_fft_on_xyz(data)
+  r_x, r_y, r_z = apply_fft_on_xyz(data)
   br = apply_kalman_filter(data)
   return 0, br
 
