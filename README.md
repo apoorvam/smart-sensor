@@ -11,7 +11,7 @@ Analysis of various HR/BR estimation algorithms from accelerometer data. The goa
 * [Sleep Monitor](http://mcn.cse.psu.edu/paper/xiaosun/ubicomp-xiao17.pdf)
 * [SeismoTracker](https://dl.acm.org/citation.cfm?id=2892279)
 
-#### Results
+### Results
 
 Dataset 1: (datasets/uic_dataset.csv)
 
@@ -37,19 +37,32 @@ Dataset 3: (datasets/hmp_dataset2.csv)
 | SeismoTracker | 73.858936       | 11.892541           |
 | Sleep Monitor | -               | 9.448819            |
 
+### How to run locally?
+
+To install all the dependencies, run the following command. This assumes you already have `python3` and `pip3` installed.
+
+`make init`
+
+To run the project on all three included datasets along with plots, run below command. This gives detailed comparision of above mentioned three algorithms on all datasets.
+
+`make run`
+
+
 ## Bio Watch
 
-Estimation of heart and breathing rates from wrist motions, based on Ballistocardiography.
+This work presents the estimation of heart and breathing rates from wrist motions, based on Ballistocardiography(BCG). It provides methods for recovering the cardiac and respiratory signals from accelerometer/gyroscope using a wrist worn sensor. After preprocessing the data, a bandpass butterworth filter is applied to isolate the BCG changes. Different components of each sensor are aggregated and a band-pass butterworth filter is applied to obtain final pulse wave. Similarly, respiratory wave is obtained by applying a averaging filter and choosing component with highest periodicity level. From this pulse and respiratory waves, HR and BR are estimated in frequency domain.
 
 ### System Overview for Heart Rate and Respiratory Rate
 
 1. Accelerometer Data
 
+This paper provides approach to recover pulse and breathing rates using data from accelerometer and/or gyroscope. However, only accelerometer data is used in this analysis.
+
 ![Raw Accelerometer Data](plots/bio_watch/raw_ax.png)
 
 2. Normalization with z-score
 
-X, Y, Z axes of accelerometer values are normalized with z-scores to give them same relevance. 
+The data is preprocessed by normalizing the X, Y, Z axes of accelerometer values with z-scores to give them same relevance. 
 
 ![Normalized data](plots/bio_watch/normalized.png)
 
@@ -93,6 +106,8 @@ Respiratory Rate (bpm): 21.60712166172107
 
 ## Sleep Monitor
 
+This paper presents a technique to monitor respiratory rate and body position from accelerometer data. It uses a filter(Total Variation filter) to extract the weak respiratory signal from noisy data and does frequency analysis to estimate respiratory rate. Rather than just using a average of estimates from each axis, it uses a multi-axis fusion approach to improve estimation accuracy.
+
 ### System Overview for Respiratory rate
 
 1. Raw Accelerometer Data
@@ -101,13 +116,21 @@ Respiratory Rate (bpm): 21.60712166172107
 
 2. Segmentation
 
+Since SleepMonitor is designed to work in motionless sleep, it removes the data segments which might involve any movements by user. In a window, if there are more than 5% of samples with acceleration greater than a threshold(10ms^2), it is discarded.
+
 3. Processing - Total Variation filter
+
+To extract fluctuations caused by respiration from weak and noisy data, a total variation filter is used for denoising. This gives a filtered signal which is very smooth and smoothness level can be controlled by λ(regularization parameter) which is set to 5 in this system. In this analysis, Total Variation Filtering is implemented using the approach given [here](http://eeweb.poly.edu/iselesni/lecture_notes/TV_filtering.pdf)
 
 ![Processed data](plots/sleep_monitor/processed_data.png)
 
-4. FFT - Respiratory rate estimation on each axis
+4. Fast Fourier Transform
+
+To estimate respiratory rate on each axis, FFT is applied on filtered data and converted to time domain signal. Only components with frequencies lesser than 0.5Hz is considered and DC components are removed. The respiratory rate in Hertz is the frequency of the component with highest magnitude.
 
 5. Multi axis fusion - Kalman filter
+
+To fuse the estimates from X, Y, Z axes rather than averaging the rates, it uses a multi-axis fusion by implementing a Kalman filter(KF). Here, historical repiratory rates are used for prediction and current estimate is used as measurement for model.
 
 ### Output
 
@@ -140,7 +163,11 @@ Breathing rate from Kalman filter: 8.442211055276381
 
 ## Seismotracker
 
-Based on Seismocardiography(SCG) approach.
+This approach relies on Seismocardiography(SCG) and tracks Heart rate, Respiratory rate and microvibrations of muscles. On normalized accelerometer data, FFT is applied from which respiratory rate is estimated. In the next stage, a high pass and low pass filtering is performed which gives pulse wave. The heart rate is estimated from this signal in frequency domain.
+
+Assumptions made:
+* This paper does not mention the cut-off frequencies for low pass filtering. In the analysis, `0.66` is used since it corresponds to normal 40 beats per minute for heart rate.
+* In estimation of heart rate, it mentions a step of squaring the signal after low pass filtering. However, it is not performed in analysis as it makes the frequency ranges out of bound. The reason for it has to be verified.
 
 ### System Overview for Heart Rate and Respiratory Rate
 
@@ -150,25 +177,15 @@ Based on Seismocardiography(SCG) approach.
 
 2. Preprocessing - Normalize
 
-3. Respiratory Rate estimation
-- based on prevalent signal amplitude in frequency domain
+3. Respiratory Rate estimation based on prevalent signal amplitude in frequency domain
 
 X-Axis:
 
 ![Breathing Rate estimation - X Axis](plots/seismotracker/br_fft_xaxis.png)
 
-Y-Axis:
-
-![Breathing Rate estimation - Y Axis](plots/seismotracker/br_fft_yaxis.png)
-
-Z-Axis:
-
-![Breathing Rate estimation - Z Axis](plots/seismotracker/br_fft_zaxis.png)
-
 4. High pass filter
 
 ![High pass filtering](plots/seismotracker/hr_highpass_filtering.png)
-
 
 5. Low pass filter
 
@@ -180,13 +197,7 @@ X-Axis:
 
 ![Heart Rate estimation - X Axis](plots/seismotracker/hr_fft_xaxis.png)
 
-Y-Axis:
-
-![Heart Rate estimation - Y Axis](plots/seismotracker/hr_fft_yaxis.png)
-
-Z-Axis:
-
-![Heart Rate estimation - Z Axis](plots/seismotracker/hr_fft_zaxis.png)
+All the plots of this algorithm are available [here](https://github.com/apoorvam/smart-sensing/tree/master/plots/seismotracker).
 
 ### Output
 
