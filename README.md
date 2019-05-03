@@ -1,4 +1,4 @@
-# Smart-Sensing
+# Smart-Sensor
 
 Analysis of various HR/BR estimation algorithms from accelerometer data. The goal is to extract/summarize the resting-state respiration rate and/or heart rate from wrist-accelerometer data. 
 
