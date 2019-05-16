@@ -37,26 +37,33 @@ Dataset 3: (datasets/hmp_dataset2.csv)
 | SeismoTracker | 73.858936       | 11.892541           |
 | Sleep Monitor | -               | 9.448819            |
 
+### Summary of HR/BR Estimation algorithms
+
+This analysis is performed using public wrist-worn accelerometer datasets(sources mentioned above). Since the ground truth values of HR/BR is not known, it's hard to calculate the mean absolute error rate or deviation. This will be done when true values are obtained and verified with this implementation of algorithms.
+
 ### How to run locally?
 
 To install all the dependencies, run the following command. This assumes you already have `python3` and `pip3` installed.
 
-`make init`
+```
+make init
+```
 
 To run the project on all three included datasets along with plots, run below command. This gives detailed comparision of above mentioned three algorithms on all datasets.
 
-`make run`
-
+```
+make run
+```
 
 ## Bio Watch
 
-This work presents the estimation of heart and breathing rates from wrist motions, based on Ballistocardiography(BCG). It provides methods for recovering the cardiac and respiratory signals from accelerometer/gyroscope using a wrist worn sensor. After preprocessing the data, a bandpass butterworth filter is applied to isolate the BCG changes. Different components of each sensor are aggregated and a band-pass butterworth filter is applied to obtain final pulse wave. Similarly, respiratory wave is obtained by applying a averaging filter and choosing component with highest periodicity level. From this pulse and respiratory waves, HR and BR are estimated in frequency domain.
+This work presents the estimation of heart and breathing rates from wrist motions, based on Ballistocardiography(BCG). It provides methods for extracting the cardiac and respiratory signals from accelerometer/gyroscope data obtained using a wrist worn sensor. After preprocessing the data, a bandpass butterworth filter is applied to isolate the BCG changes. Different components(x,y,z) of each sensor are aggregated and a band-pass butterworth filter is applied to obtain final pulse wave. Similarly, respiratory wave is obtained by applying a averaging filter and choosing component with highest periodicity level. From pulse and respiratory waves, HR and BR are estimated in frequency domain by identifying the frequency with highest amplitude.
 
 ### System Overview for Heart Rate and Respiratory Rate
 
 1. Accelerometer Data
 
-This paper provides approach to recover pulse and breathing rates using data from accelerometer and/or gyroscope. However, only accelerometer data is used in this analysis.
+Though this estimation approach can be applied on data obtained from accelerometer and/or gyroscope, only accelerometer data is used in this analysis.
 
 ![Raw Accelerometer Data](plots/bio_watch/raw_ax.png)
 

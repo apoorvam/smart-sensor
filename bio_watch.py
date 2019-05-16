@@ -22,7 +22,7 @@ save_plots = False
 
 def normalize(data):
   for i in range(0, 3):
-    data[:,i] = sp.stats.zscore(data[:,i])  
+    data[:,i] = sp.stats.zscore(data[:,i])
   return data
 
 def apply_average_filter(data, window):
