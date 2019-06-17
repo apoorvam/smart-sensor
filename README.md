@@ -17,24 +17,24 @@ Dataset 1: (datasets/uic_dataset.csv)
 
 |               | Heart Rate(bpm) | Breathing Rate(bpm) |
 |---------------|-----------------|---------------------|
-| Bio Watch     | 103.233670      | 21.607122           |
-| SeismoTracker | 106.834777      | 12.804168           |
+| Bio Watch     | 62.420359       | 21.607122           |
+| SeismoTracker | 46.415109       | 12.804168           |
 | Sleep Monitor | -               | 8.442211            |
 
 Dataset 2: (datasets/hmp_dataset1.csv)
 
 |               | Heart Rate(bpm) | Breathing Rate(bpm) |
 |---------------|-----------------|---------------------|
-| Bio Watch     | 76.980598       | 11.266164           |
-| SeismoTracker | 51.319823       | 18.775545           |
+| Bio Watch     | 48.816964       | 11.266164           |
+| SeismoTracker | 45.061308       | 18.775545           |
 | Sleep Monitor | -               | 9.448819            |
 
 Dataset 3: (datasets/hmp_dataset2.csv)
 
 |               | Heart Rate(bpm) | Breathing Rate(bpm) |
 |---------------|-----------------|---------------------|
-| Bio Watch     | 88.256334       | 9.389671            |
-| SeismoTracker | 73.858936       | 11.892541           |
+| Bio Watch     | 48.822653       | 9.389671            |
+| SeismoTracker | 44.440547       | 11.892541           |
 | Sleep Monitor | -               | 9.448819            |
 
 ### Summary of HR/BR Estimation algorithms
@@ -99,9 +99,9 @@ The data is preprocessed by normalizing the X, Y, Z axes of accelerometer values
 
 ```sh
 $ python3 bio_watch.py
-Max Amplitude: 22.077653592365234
-Max Frequency: 1.7205611745513867
-Heart Rate (bpm): 103.23367047308321
+Max Amplitude: 16.751657650637757
+Max Frequency: 1.0403393148450244
+Heart Rate (bpm): 62.420358890701465
 Max Amplitude within 0.13 and 0.66 Hz frequency:
 X-Axis: 166.01035262050667
 Y-Axis: 120.777797237787
@@ -227,17 +227,17 @@ Average Respiration Rate (bpm): 12.80416802344513
 
 Heart Rate:
 X-Axis:
-Max Amplitude: 1.335674895504559
-Frequency: 1.7405665906870724
-Heart Rate (bpm): 104.43399544122434
+Max Amplitude: 0.39122616870886334
+Frequency: 0.6602149137088895
+Heart Rate (bpm): 39.61289482253337
 Y-Axis:
-Max Amplitude: 1.4995635787466068
-Frequency: 2.480807554542494
-Heart Rate (bpm): 148.84845327254965
+Max Amplitude: 0.8094572313012403
+Frequency: 0.8002605014653207
+Heart Rate (bpm): 48.01563008791924
 Z-Axis:
-Max Amplitude: 1.497093668079774
-Frequency: 1.120364702051449
-Heart Rate (bpm): 67.22188212308693
-Average Heart Rate (bpm): 106.8347769456203
+Max Amplitude: 0.8001946996777255
+Frequency: 0.8602800390752197
+Heart Rate (bpm): 51.61680234451318
+Average Heart Rate (bpm): 46.41510908498859
 
 ```
