@@ -5,7 +5,7 @@ import scipy.fftpack
 import scipy as sp
 from scipy.stats import zscore
 import pandas as pd
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, filtfilt
 from scipy import signal
 import warnings
 warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
@@ -18,7 +18,7 @@ sampling_frequency = 50
 average_filter_window_duration_hr = int((1/7)*sampling_frequency)
 average_filter_window_duration_br = int((40/60)*sampling_frequency)
 T = 1/sampling_frequency
-save_plots = False
+save_plots = True
 
 def normalize(data):
   for i in range(0, 3):
@@ -57,7 +57,7 @@ def butter_bandpass(lowcut, highcut, fs, order):
 
 def butter_bandpass_filter(data, lowcut, highcut, fs, order):
   b, a = butter_bandpass(lowcut, highcut, fs, order)
-  y = lfilter(b, a, data)
+  y = filtfilt(b, a, data)
   return y
 
 def apply_bandpass_butterworth_filter(data, low_cutoff_freq, high_cutoff_freq):
@@ -76,7 +76,7 @@ def fft(acc_data, f_low, f_high, plot_save_path):
   fft_data = sp.fftpack.fft(acc_data)
   f = np.linspace(0, N/sampling_frequency, N)
 
-  plt.plot(f[:N // 2], np.abs(fft_data)[:N // 2] * 1 / N)
+  plt.plot(f, np.abs(fft_data))
   plt.xlabel('Frequency in Hertz [Hz]')
   plt.ylabel('Magnitude')
   plt.title('FFT')
@@ -127,13 +127,16 @@ def calculate_breathing_rate(normalized_data):
 def calculate_heart_rate(normalized_data):
   smooth_data = apply_average_filter(normalized_data, average_filter_window_duration_hr)
   smooth_data = np.array(list(filter(lambda row: np.isfinite(np.sum(row)), smooth_data)), dtype=np.float64)
+  plot(smooth_data[:,0], 'Smoothened Accelerometer Data - HR', 'plots/bio_watch/smoothened_ax_hr.png')
 
   low_cutoff_freq = 4
   high_cutoff_freq = 11
-  bandpass1_data = apply_bandpass_butterworth_filter(smooth_data, low_cutoff_freq, high_cutoff_freq)
-  plot(bandpass1_data[:,0], 'Bandpass-1 Accelerometer Data', 'plots/bio_watch/bandpass1_ax.png')
+  smooth_data[:,0] = apply_bandpass_butterworth_filter(smooth_data[:,0], low_cutoff_freq, high_cutoff_freq)
+  smooth_data[:,1] = apply_bandpass_butterworth_filter(smooth_data[:,1], low_cutoff_freq, high_cutoff_freq)
+  smooth_data[:,2] = apply_bandpass_butterworth_filter(smooth_data[:,2], low_cutoff_freq, high_cutoff_freq)
+  plot(smooth_data[:,0], 'Bandpass-1 Accelerometer Data', 'plots/bio_watch/bandpass1_ax.png')
 
-  aggregated_data = aggregate_components(bandpass1_data)
+  aggregated_data = aggregate_components(smooth_data)
 
   high_cutoff_freq = 2.5
   low_cutoff_freq = 0.66

@@ -7,7 +7,7 @@ Analysis of various HR/BR estimation algorithms from accelerometer data. The goa
 * [Dataset for ADL Recognition with Wrist-worn Accelerometer Data Set](https://archive.ics.uci.edu/ml/datasets/Dataset+for+ADL+Recognition+with+Wrist-worn+Accelerometer) - Dataset 2 and 3 - Accelerometer data of 22 and 21 seconds resepctively of 32Hz sampling frequency
 
 #### Publications
-* [Bio Watch](https://ieeexplore.ieee.org/abstract/document/7349394)
+* [Bio Watch](https://www.researchgate.net/publication/301449389_BioWatch_Estimation_of_Heart_and_Breathing_Rates_from_Wrist_Motions)
 * [Sleep Monitor](http://mcn.cse.psu.edu/paper/xiaosun/ubicomp-xiao17.pdf)
 * [SeismoTracker](https://dl.acm.org/citation.cfm?id=2892279)
 

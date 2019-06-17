@@ -5,11 +5,11 @@ import scipy.fftpack
 import scipy as sp
 import pandas as pd
 from scipy.stats import zscore
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, filtfilt
 from scipy import signal
 
 style.use('ggplot')
-save_plots = False
+save_plots = True
 
 # Source: https://archive.ics.uci.edu/ml/datasets/MHEALTH+Dataset
 input_file_path = 'datasets/uic_dataset.csv'
@@ -76,7 +76,7 @@ def butter_pass_filter(data, cutoff, fs, btype, order=5):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = butter(order, normal_cutoff, btype=btype, analog=False)
-    y = lfilter(b, a, data)
+    y = filtfilt(b, a, data)
     return y
 
 def normalize(data):
@@ -129,6 +129,7 @@ def seismotracker(data, sampling_freq):
   print("Average Respiration Rate (bpm):", avg_br)
 
   print('\nHeart Rate:')
+
   highpass_filtered_data = apply_pass_filter(normalized_data, 'high', highpass_cutoff_frequency, 'plots/seismotracker/hr_highpass_filtering.png')
   lowpass_filtered_data = apply_pass_filter(highpass_filtered_data, 'low', lowpass_cutoff_frequency, 'plots/seismotracker/hr_lowpass_filtering.png')
 

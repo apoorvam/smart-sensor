@@ -20,7 +20,7 @@ acceleration_threshold = 10
 percentage_of_allowed_samples_with_motion_in_window = 25
 motionless_sleep_threshold_samples_in_window = (percentage_of_allowed_samples_with_motion_in_window/100)*segment_window_size*sampling_frequency
 tv_filter_lambda = 5
-save_plots = False
+save_plots = True
 
 def segment(data):
   size = len(data)
