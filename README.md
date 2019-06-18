@@ -13,7 +13,7 @@ Analysis of various HR/BR estimation algorithms from accelerometer data. The goa
 
 ### Results
 
-Dataset 1: (datasets/uic_dataset.csv)
+Dataset 1: (datasets/uic_dataset.csv) - Sleep data
 
 |               | Heart Rate(bpm) | Breathing Rate(bpm) |
 |---------------|-----------------|---------------------|
@@ -21,7 +21,7 @@ Dataset 1: (datasets/uic_dataset.csv)
 | SeismoTracker | 46.415109       | 12.804168           |
 | Sleep Monitor | -               | 8.442211            |
 
-Dataset 2: (datasets/hmp_dataset1.csv)
+Dataset 2: (datasets/hmp_dataset1.csv) - lying down bed
 
 |               | Heart Rate(bpm) | Breathing Rate(bpm) |
 |---------------|-----------------|---------------------|
@@ -29,7 +29,7 @@ Dataset 2: (datasets/hmp_dataset1.csv)
 | SeismoTracker | 45.061308       | 18.775545           |
 | Sleep Monitor | -               | 9.448819            |
 
-Dataset 3: (datasets/hmp_dataset2.csv)
+Dataset 3: (datasets/hmp_dataset2.csv) - lying down bed
 
 |               | Heart Rate(bpm) | Breathing Rate(bpm) |
 |---------------|-----------------|---------------------|
@@ -44,7 +44,13 @@ True Heart rate of `Dataset 1` is: 64
 
 ### Summary of HR/BR Estimation algorithms
 
-This analysis is performed using public wrist-worn accelerometer datasets(sources mentioned above). Since the ground truth values of HR/BR is not known, it's hard to calculate the mean absolute error rate or deviation. This will be done when true values are obtained and verified with this implementation of algorithms.
+This analysis is performed using public wrist-worn accelerometer datasets(sources mentioned above). 
+
+* Heart Rate (HR): * 
+For the sleep dataset 1 having sampling frequency of 50Hz, the ground true heart rate is `64 bpm`. With BioWatch, this estimate came close to `62.42 bpm` and Seismotracker gives `46.42 bpm`. However, Seismotracker is missing some details from the paper, so there is score for correcting the implementation. Overall, BioWatch gives better performance.
+
+* Breathing Rate (BR): *
+All three algorithms give estimates on breathing rate, with standard breathing rates of 8-40 bpm. For Dataset 1, BioWatch gives `21.6 bpm`, SeismoTracker `12.8 bpm` and Sleep Monitor gives `8.44 bpm`. Again, there might be scope for correction in implementation on this. Since the ground truth values of BR is not known, it's hard to calculate the mean absolute error rate or deviation. This will be done when true values are obtained and verified with this implementation of algorithms.
 
 ### How to run locally?
 
