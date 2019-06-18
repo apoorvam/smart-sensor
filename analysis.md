@@ -12,7 +12,7 @@
 | SeismoTracker | 46.415109       |
 | Sleep Monitor | -               |
 
-* True Heart rate of `Dataset 1` is: 64. Below is the plot of true heart rate. *
+*True Heart rate of `Dataset 1` is: 64. Below is the plot of true heart rate.*
 
 ![Ground True Heart Rate](plots/uic_heart_rate.png)
 
