@@ -37,6 +37,11 @@ Dataset 3: (datasets/hmp_dataset2.csv)
 | SeismoTracker | 44.440547       | 11.892541           |
 | Sleep Monitor | -               | 9.448819            |
 
+True Heart rate of `Dataset 1` is: 
+
+![True Heart Rate](plots/uic_heart_rate.png)
+
+
 ### Summary of HR/BR Estimation algorithms
 
 This analysis is performed using public wrist-worn accelerometer datasets(sources mentioned above). Since the ground truth values of HR/BR is not known, it's hard to calculate the mean absolute error rate or deviation. This will be done when true values are obtained and verified with this implementation of algorithms.
@@ -83,7 +88,7 @@ The data is preprocessed by normalizing the X, Y, Z axes of accelerometer values
 
 * Aggregate components
 * Band pass butterworth filter of order 2 (0.66 Hz - 2.5 Hz)
-![Bandpass 2 data](plots/bio_watch/bandpass2_ax.png)
+![Bandpass 2 data](plots/bio_watch/pulse_wave.png)
 
 * Apply FFT to obtain Heart rate in frequency domain
 ![FFT](plots/bio_watch/hr_fft.png)

@@ -141,7 +141,7 @@ def calculate_heart_rate(normalized_data):
   high_cutoff_freq = 2.5
   low_cutoff_freq = 0.66
   bandpass2_data = apply_bandpass_butterworth_filter(aggregated_data, low_cutoff_freq, high_cutoff_freq)
-  plot(bandpass2_data, 'Bandpass-2 Accelerometer Data', 'plots/bio_watch/bandpass2_ax.png')
+  plot(bandpass2_data, 'Pulse wave from Accelerometer Data', 'plots/bio_watch/pulse_wave.png')
 
   max_amp, max_freq = fft(bandpass2_data, 0.66, 2.5, 'plots/bio_watch/hr_fft.png')
   print('Max Amplitude:', max_amp)
