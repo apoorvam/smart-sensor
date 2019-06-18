@@ -37,7 +37,7 @@ Dataset 3: (datasets/hmp_dataset2.csv)
 | SeismoTracker | 44.440547       | 11.892541           |
 | Sleep Monitor | -               | 9.448819            |
 
-True Heart rate of `Dataset 1` is: 
+True Heart rate of `Dataset 1` is: 64
 
 ![True Heart Rate](plots/uic_heart_rate.png)
 
@@ -208,6 +208,11 @@ X-Axis:
 X-Axis:
 
 ![Heart Rate estimation - X Axis](plots/seismotracker/hr_fft_xaxis.png)
+
+Final heart wave in X-Axis:
+
+![Heart Wave X-Axis](plots/seismotracker/seismotracker_hr_estimate_ax.png)
+
 
 All the plots of this algorithm are available [here](https://github.com/apoorvam/smart-sensing/tree/master/plots/seismotracker).
 

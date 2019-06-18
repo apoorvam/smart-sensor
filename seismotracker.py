@@ -34,6 +34,20 @@ def plot(data, title, plot_save_path):
   draw_plot(plot_save_path)
   plt.close()
 
+def plot_hr_graph(data, plot_save_path):
+  data = np.array(data)
+  N = len(data)
+  y = np.linspace(0, N/sampling_frequency, N)
+  plt.plot(y, data)
+
+  plt.title('Heart Rate signal')
+  plt.ylabel('Amplitude')
+  plt.xlabel('Time (s)')
+  # plt.axis([0,61,0.0006,-0.0006])
+  draw_plot(plot_save_path)
+  plt.close()
+  return
+
 def draw_plot(plot_save_path):
   if (save_plots):
     plt.savefig(plot_save_path)
@@ -143,11 +157,14 @@ def seismotracker(data, sampling_freq):
   heart_rate_y = fft(lowpass_filtered_data[:,1], hr_min_freq, hr_max_freq, 'plots/seismotracker/hr_fft_xaxis.png')
   print("Heart Rate (bpm):", heart_rate_y)
 
-  print("Z-Axis:")    
+  print("Z-Axis:")
   heart_rate_z = fft(lowpass_filtered_data[:,2], hr_min_freq, hr_max_freq, 'plots/seismotracker/hr_fft_zaxis.png')
   print("Heart Rate (bpm):", heart_rate_z)
   avg_hr = (heart_rate_x + heart_rate_y + heart_rate_z)/3
   print("Average Heart Rate (bpm):", avg_hr)
+  plot_hr_graph(lowpass_filtered_data[:,0], "plots/seismotracker/seismotracker_hr_estimate_ax.png")
+  plot_hr_graph(lowpass_filtered_data[:,1], "plots/seismotracker/seismotracker_hr_estimate_ay.png")
+  plot_hr_graph(lowpass_filtered_data[:,2], "plots/seismotracker/seismotracker_hr_estimate_az.png")
   return avg_hr, avg_br
 
 if __name__ == '__main__':
